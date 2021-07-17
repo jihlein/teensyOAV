@@ -180,8 +180,9 @@ void menuMixer(uint8_t i)
     // Update limits when exiting
     if (button == ENTER)
     {
-      updateLimits();      // Update travel limits based on percentages
+      updateLimits();        // Update travel limits based on percentages
       saveConfigToEEPROM();  // Save value and return
+      setupServos();         // Re-setup servos in case output type was changed
       waitButton4();         // Wait for user's finger off the button
     }
   }
