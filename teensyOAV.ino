@@ -32,7 +32,6 @@
 #include <DSMRX.h>
 #include <MPU6050.h>
 #include <myPWMServo.h>
-#include <PPMReader.h>
 #include <sbus.h>
 #include <U8g2lib.h>
 #include <Wire.h>
