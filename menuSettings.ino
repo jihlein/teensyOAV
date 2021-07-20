@@ -206,7 +206,7 @@ void menuRcSetup(uint8_t section)
       // Return the preset to "Options" when going back to the General menu
       config.preset = OPTIONS;
 
-      saveConfigToEEPROM(); // Save value and return
+      saveConfigToEEPROM(); // Save values
 
       // In case rxMode changed, reset to re-init rx pin/library
       if (currentRxMode != config.rxMode)
@@ -214,6 +214,9 @@ void menuRcSetup(uint8_t section)
         SCB_AIRCR = 0x05FA0004;
         while(1);  // Wait for reboot 
       }
+      
+      // In case preset mode changed, re-setup the servo output types
+      setupServos();
       
       waitButton4();  // Wait for user's finger off the button
     }
