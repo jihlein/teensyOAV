@@ -148,13 +148,13 @@ const menuRange_t curvesMenuRanges[NUMBEROFCURVES][NUMBEROFPOINTS+1] PROGMEM =
 
 const uint16_t offsetsMenuText[MAX_OUTPUTS] PROGMEM = 
 {
-  0, 0, 0, 0, 0, 0, 0, 0
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
 const uint16_t offsetsMenuOffsets[MAX_OUTPUTS] PROGMEM = 
 {
-  OFFSETSOFFSET, OFFSETSOFFSET, OFFSETSOFFSET, OFFSETSOFFSET, 
-  OFFSETSOFFSET, OFFSETSOFFSET, OFFSETSOFFSET, OFFSETSOFFSET
+  OFFSETSOFFSET, OFFSETSOFFSET, OFFSETSOFFSET, OFFSETSOFFSET, OFFSETSOFFSET,
+  OFFSETSOFFSET, OFFSETSOFFSET, OFFSETSOFFSET, OFFSETSOFFSET, OFFSETSOFFSET
 };
 
 const menuRange_t offsetsMenuRanges[MAX_OUTPUTS][NUMBEROFPOINTS+1] PROGMEM = 
@@ -246,5 +246,27 @@ const menuRange_t offsetsMenuRanges[MAX_OUTPUTS][NUMBEROFPOINTS+1] PROGMEM =
     {-125,125,1,0,0},          // Point 6
     {-125,125,1,0,0},          // Point 7
     {SRC1, SRC1, 1, 1, SRC1},  // Associated channel (unused)
-  },    
+  },
+  {
+    // OUT9 offset curve (8)
+    {-125,125,1,0,0},          // Point 1
+    {-125,125,1,0,0},          // Point 2
+    {-125,125,1,0,0},          // Point 3
+    {-125,125,1,0,0},          // Point 4
+    {-125,125,1,0,0},          // Point 5
+    {-125,125,1,0,0},          // Point 6
+    {-125,125,1,0,0},          // Point 7
+    {SRC1, SRC1, 1, 1, SRC1},  // Associated channel (unused)
+  },
+  {
+    // OUT10 offset curve (8)
+    {-125,125,1,0,0},          // Point 1
+    {-125,125,1,0,0},          // Point 2
+    {-125,125,1,0,0},          // Point 3
+    {-125,125,1,0,0},          // Point 4
+    {-125,125,1,0,0},          // Point 5
+    {-125,125,1,0,0},          // Point 6
+    {-125,125,1,0,0},          // Point 7
+    {SRC1, SRC1, 1, 1, SRC1},  // Associated channel (unused)
+  }  
 };

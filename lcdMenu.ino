@@ -73,12 +73,14 @@ const char MainMenuItem15[] PROGMEM = "15. OUT5 Mixer";
 const char MainMenuItem16[] PROGMEM = "16. OUT6 Mixer";
 const char MainMenuItem17[] PROGMEM = "17. OUT7 Mixer";
 const char MainMenuItem18[] PROGMEM = "18. OUT8 Mixer";
-const char MainMenuItem20[] PROGMEM = "19. Servo direction";
-const char MainMenuItem22[] PROGMEM = "20. Neg. Servo trvl. (%)";
-const char MainMenuItem23[] PROGMEM = "21. Pos. Servo trvl. (%)";
-const char MainMenuItem32[] PROGMEM = "22. Custom Ch. order";
-const char MainMenuItem31[] PROGMEM = "23. In/Out display";
-const char MainMenuItem24[] PROGMEM = "24. Error log";
+const char MainMenuItem4[]  PROGMEM = "19. OUT9 Mixer";
+const char MainMenuItem5[]  PROGMEM = "20. OUT10 Mixer";
+const char MainMenuItem20[] PROGMEM = "21. Servo direction";
+const char MainMenuItem22[] PROGMEM = "22. Neg. Servo trvl. (%)";
+const char MainMenuItem23[] PROGMEM = "23. Pos. Servo trvl. (%)";
+const char MainMenuItem32[] PROGMEM = "24. Custom Ch. order";
+const char MainMenuItem31[] PROGMEM = "25. In/Out display";
+const char MainMenuItem24[] PROGMEM = "26. Error log";
 
 // Sensors text
 const char PText15[]         PROGMEM = "Gyro";
@@ -280,14 +282,16 @@ const char Status4[] PROGMEM = "(ARMED)";
 const char Status5[] PROGMEM = "(DISARMED)";
 
 // Outputs
-const char MOUT1[] PROGMEM = "OUT1";
-const char MOUT2[] PROGMEM = "OUT2";  
-const char MOUT3[] PROGMEM = "OUT3";  
-const char MOUT4[] PROGMEM = "OUT4";  
-const char MOUT5[] PROGMEM = "OUT5";  
-const char MOUT6[] PROGMEM = "OUT6";  
-const char MOUT7[] PROGMEM = "OUT7";  
-const char MOUT8[] PROGMEM = "OUT8";  
+const char MOUT1[]  PROGMEM = "OUT1";
+const char MOUT2[]  PROGMEM = "OUT2";  
+const char MOUT3[]  PROGMEM = "OUT3";  
+const char MOUT4[]  PROGMEM = "OUT4";  
+const char MOUT5[]  PROGMEM = "OUT5";  
+const char MOUT6[]  PROGMEM = "OUT6";  
+const char MOUT7[]  PROGMEM = "OUT7";  
+const char MOUT8[]  PROGMEM = "OUT8";
+const char MOUT9[]  PROGMEM = "OUT9";
+const char MOUT10[] PROGMEM = "OUT10";  
 
 // Orientation
 const char MixerMenuItem2[] PROGMEM = "Forward";
@@ -436,6 +440,8 @@ const char I7[]  PROGMEM = "7:";
 const char I8[]  PROGMEM = "8:";
 const char I9[]  PROGMEM = "Pn:";
 const char I10[] PROGMEM = "Out:";
+const char I11[] PROGMEM = "9:";
+const char I12[] PROGMEM = "10:";
 
 const char O0[] PROGMEM = "Thr:";
 const char O1[] PROGMEM = "Ail:";
@@ -510,15 +516,14 @@ const char* textMenu[] =
     //
     ErrorText3, Dummy0,                                                              // 75 No SIGNAL 76 spare
     //
-    MainMenuItem0, MainMenuItem1, MainMenuItem9, MainMenuItem7, MainMenuItem8, 
-    MainMenuItem10, MainMenuItem2, MainMenuItem3,MainMenuItem30,                     // 77 to 100 Main menu
-    MainMenuItem25, MainMenuItem11,MainMenuItem12,MainMenuItem13,MainMenuItem14,
-    MainMenuItem15,MainMenuItem16,MainMenuItem17,MainMenuItem18,
-    MainMenuItem20,MainMenuItem22, MainMenuItem23,MainMenuItem32, MainMenuItem31, 
-    MainMenuItem24, 
+    MainMenuItem0,  MainMenuItem1,  MainMenuItem9,  MainMenuItem7,  MainMenuItem8,   // 77 to 102 Main menu
+    MainMenuItem10, MainMenuItem2,  MainMenuItem3,  MainMenuItem30,
+    MainMenuItem25, MainMenuItem11, MainMenuItem12, MainMenuItem13, MainMenuItem14,
+    MainMenuItem15, MainMenuItem16, MainMenuItem17, MainMenuItem18, MainMenuItem4,
+    MainMenuItem5,  MainMenuItem20, MainMenuItem22, MainMenuItem23, MainMenuItem32,  
+    MainMenuItem31, MainMenuItem24, 
     //
-    Dummy0, Dummy0,                                                                  // 101 to 104 Spare
-    Dummy0, Dummy0,
+    Dummy0, Dummy0,                                                                  // 103 to 104 Spare
     //
     ChannelRef0, ChannelRef1, ChannelRef2, ChannelRef3, ChannelRef4,                 // 105 to 115 Ch. names
     ChannelRef5, ChannelRef6, ChannelRef7, ChannelRef8,   
@@ -595,11 +600,12 @@ const char* textMenu[] =
     //
     Misc_Msg01,                                                                     // 229 AccVert
     //
-    MOUT1, MOUT2, MOUT3, MOUT4, MOUT5, MOUT6, MOUT7, MOUT8,                         // 230 to 237 Sources OUT1- OUT8, 
+    MOUT1, MOUT2, MOUT3, MOUT4, MOUT5,                                              // 230 to 239 Sources OUT1- OUT10,  
+    MOUT6, MOUT7, MOUT8, MOUT9, MOUT10,
     //
     Dummy0,Dummy0,Dummy0,Dummy0,Dummy0,                                             // Spare
     Dummy0,Dummy0,Dummy0,Dummy0,Dummy0,                                             // Spare
-    Dummy0,Dummy0,Dummy0,Dummy0,Dummy0,                                             // Spare
+    Dummy0,Dummy0,Dummy0,                                                           // Spare
     //
     ChannelRef8,                                                                    // 253 + NONE 
     //
@@ -706,9 +712,9 @@ const char* textMenu[] =
     //SWLPF1, ChannelRef8,
     Dummy0,Dummy0,Dummy0,Dummy0,Dummy0,                                             // Spare
     //
-    I1, I2, I3, I4, I5, I6, I7, I8, I9, I10,                                        // 468 to 477
+    I1, I2, I3, I4, I5, I6, I7, I8, I11, I12, I9, I10,                              // 468 to 479
     //
-    O0, O1, O2, O3, O4, O5, O6, O7,                                                 // 478 to 485
+    O0, O1, O2, O3, O4, O5, O6, O7,                                                 // 480 to 487
   }; 
   
 //************************************************************

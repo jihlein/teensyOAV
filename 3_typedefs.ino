@@ -176,71 +176,71 @@ typedef struct
   int8_t    preset;                         // Mixer preset
   int8_t    buzzer;                         // Buzzer control ON/OFF
   
-  // Channel configuration (272)[171]
+  // Channel configuration (340)[171] #$(272)[171]
   channel_t channel[MAX_OUTPUTS];           // Channel mixing data  
 
-  // Servo menu (24)[443]
+  // Servo menu (30)[511] #$(24)[443]
   int8_t    servoReverse[MAX_OUTPUTS];      // Reversal of output channel
   int8_t    minTravel[MAX_OUTPUTS];         // Minimum output value (-125 to 125)
   int8_t    maxTravel[MAX_OUTPUTS];         // Maximum output value (-125 to 125)
 
-  // RC inputs (16)[467]
+  // RC inputs (16)[541] #$(16)[467]
   int16_t   rxChannelZeroOffset[MAX_RC_CHANNELS];  // RC channel offsets for actual radio channels
 
-  // P1 Acc zeros (12)[483]
+  // P1 Acc zeros (12)[557] #$(12)[483]
   int16_t   accelZeroP1[NUMBEROFAXIS];      // P1 Accel calibration results. Note: Accel-Z zero centered on 1G (about +124)
   int16_t   accelZeroNormZP1;               // Accel-Z zero for normal Z values
   int16_t   accelZeroInvZP1;                // Accel-Z zero for inverted Z values
   int16_t   accelZeroDiffP1;                // Difference between normal and inverted Accel-Z zeros
 
-  // Gyro zeros (6)[495]
+  // Gyro zeros (6)[569] #$(6)[495]
   int16_t   gyroZeroP1[NUMBEROFAXIS];       // NB. These are now for P1 only
 
-  // Airspeed zero (2)[501]
+  // Airspeed zero (2)[575] #$(2)[501]
   int16_t   airspeedZero;                   // Zero airspeed sensor offset
 
-  // Flight mode (1)[503]
+  // Flight mode (1)[577] #$(1)[503]
   int8_t    flightSel;                      // User set flight mode
 
-  // Adjusted trims (8)[504]
+  // Adjusted trims (8)[578] #$(8)[504]
   int16_t   rolltrim[FLIGHT_MODES];         // User set trims * 100
   int16_t   pitchtrim[FLIGHT_MODES];
 
-  // Sticky flags (1)[512]
+  // Sticky flags (1)[586] #$(1)[512]
   uint8_t   mainFlags;                      // Non-volatile flags
 
-  // Misc (2)[513]
+  // Misc (2)[587] #$(2)[513]
   int8_t    rudderPol;                      // Rudder RC input polarity (V1.1 stops here...)
   int8_t    aileronPol;                     // Aileron RC input polarity
     
-  // Error log (21)[515]
+  // Error log (21)[589] #$(21)[515]
   int8_t    logPointer;
   int8_t    log[LOGLENGTH];
   
-  // P2 Acc zeros (12)[536]
+  // P2 Acc zeros (12)[610] #$(12)[536]
   int16_t   accelZeroP2[NUMBEROFAXIS];      // P2 Accel calibration results. Note: Accel-Z zero centered on 1G (about +124)
   int16_t   accelZeroNormZP2;               // Accel-Z zero for normal Z values
   int16_t   accelZeroInvZP2;                // Accel-Z zero for inverted Z values
   int16_t   accelZeroDiffP2;                // Difference between normal and inverted Accel-Z zeros
   
-  // P2 Gyro zeros (6)[548]
+  // P2 Gyro zeros (6)[622] #4(6)[548]
   int16_t   gyroZeroP2[NUMBEROFAXIS];       // NB. These are for P2 only
 
-  // Advanced items (1) [554]
+  // Advanced items (1)[628] #$(1) [554]
   int8_t    orientationP1;                  // P1 orientation
   
-  // Curves (48) [555]
+  // Curves (48)[629] #$(48) [555]
   curve_t   curve[NUMBEROFCURVES];
   
-  // Custom channel order (8) [603]
+  // Custom channel order (8)[677] #$(8) [603]
   int8_t    customChannelOrder[MAX_RC_CHANNELS];
   
-  // Output offsets (64) [611]
+  // Output offsets (64)[685] #$(64) [611]
   curve_t   offsets[MAX_OUTPUTS];
   
-  // Misc (1)[675]
+  // Misc (1)[749] #$(1)[675]
   int8_t    elevatorPol;                    // Elevator RC input polarity
 
-  // [676]
+  // [750] #$[676]
 
 } CONFIG_STRUCT;

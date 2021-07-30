@@ -34,7 +34,7 @@
 // ************************************************************
 
 #define SERVOSTART 230  // Start of OUT1-OUT8 Menu text items
-#define SERVOITEMS 8    // Number of menu items
+#define SERVOITEMS 10   // Number of menu items
 #define SERVOOFFSET 80  // LCD horizontal offsets
 
 //************************************************************
@@ -43,16 +43,16 @@
    
 const uint16_t servoMenuText[3][SERVOITEMS] PROGMEM = 
 {
-  {141,141,141,141,141,141,141,141},
-  {0,0,0,0,0,0,0,0},
-  {0,0,0,0,0,0,0,0},
+  {141,141,141,141,141,141,141,141,141,141},
+  {0,0,0,0,0,0,0,0,0,0},
+  {0,0,0,0,0,0,0,0,0,0},
 };
 
 const uint16_t servoMenuOffsets[3][SERVOITEMS] PROGMEM =
 {
-  {SERVOOFFSET,80,80,80,80,80,80,80},
-  {80,80,80,80,80,80,80,80},
-  {80,80,80,80,80,80,80,80},
+  {SERVOOFFSET,80,80,80,80,80,80,80,80,80},
+  {80,80,80,80,80,80,80,80,80,80},
+  {80,80,80,80,80,80,80,80,80,80},
 };
 
 // As all of these are the same, a new range cloning menu option is used

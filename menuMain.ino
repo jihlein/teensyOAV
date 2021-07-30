@@ -34,9 +34,9 @@
 // ************************************************************
 
 #ifdef ERROR_LOG
-#define MAINITEMS 24  // Number of menu items
+#define MAINITEMS 26  // Number of menu items
 #else
-#define MAINITEMS 23  // Number of menu items
+#define MAINITEMS 25  // Number of menu items
 #endif
 
 #define MAINSTART 77
@@ -160,22 +160,28 @@ void doMainMenuItem(uint8_t menuItem)
       menuMixer(7);       // 18.OUT8 Mixer
       break;
     case MAINSTART+18:
-      menuServoSetup(1);  // 19.Servo direction
+      menuMixer(8);       // 19.OUT9 Mixer
       break;
     case MAINSTART+19:
-      menuServoSetup(2);  // 20.Neg. Servo trvl. (%)
+      menuMixer(9);       // 20.OUT10 Mixer
       break;
     case MAINSTART+20:
-      menuServoSetup(3);  // 21.Pos. Servo trvl. (%)
+      menuServoSetup(1);  // 21.Servo direction
       break;
     case MAINSTART+21:
-      menuChannel();      // 22.Custom Ch. order
+      menuServoSetup(2);  // 22.Neg. Servo trvl. (%)
       break;
     case MAINSTART+22:
-      displayInOut();     // 23.IO menu
+      menuServoSetup(3);  // 23.Pos. Servo trvl. (%)
       break;
     case MAINSTART+23:
-      menuLog();          // 24.Error log
+      menuChannel();      // 24.Custom Ch. order
+      break;
+    case MAINSTART+24:
+      displayInOut();     // 25.IO menu
+      break;
+    case MAINSTART+25:
+      menuLog();          // 26.Error log
       break;
     default:
       break;  

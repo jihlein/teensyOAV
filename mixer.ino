@@ -33,8 +33,6 @@
 // * Defines
 // ************************************************************
 
-#define MIX_OUTPUTS 8
-
 // Throttle volume curves
 // Why 101 steps? Well, both 0% and 100% transition values are valid...
 
@@ -158,7 +156,7 @@ void processMixer(void)
   // Main mix loop - sensors, RC inputs and other channels
   //************************************************************
 
-  for (i = 0; i < MIX_OUTPUTS; i++)
+  for (i = 0; i < MAX_OUTPUTS; i++)
   {
     //************************************************************
     // Zero each channel value to start
@@ -548,7 +546,7 @@ void processMixer(void)
     config.channel[i].p1Value = p1Solution;
     config.channel[i].p1Value = p1Solution;
 
-  } // Mixer loop: for (i = 0; i < MIX_OUTPUTS; i++)
+  } // Mixer loop: for (i = 0; i < MAX_OUTPUTS; i++)
 
   //************************************************************
   // Mixer transition code
@@ -562,7 +560,7 @@ void processMixer(void)
   }
 
   // Recalculate P1 values based on transition stage
-  for (i = 0; i < MIX_OUTPUTS; i++)
+  for (i = 0; i < MAX_OUTPUTS; i++)
   {
     // Speed up the easy ones :)
     if (transition == 0)
@@ -644,7 +642,7 @@ void processMixer(void)
   // mixer. Linear or Sine curve. Reverse Sine done automatically
   //************************************************************
 
-  for (i = 0; i < MIX_OUTPUTS; i++)
+  for (i = 0; i < MAX_OUTPUTS; i++)
   {
     // Ignore if both throttle volumes are 0% (no throttle)
     if  (!((config.channel[i].p1ThrottleVolume == 0) &&
@@ -752,7 +750,7 @@ void processMixer(void)
   // loop as it is non-linear, unlike the transition.
   //************************************************************
 
-  for (i = 0; i < MIX_OUTPUTS; i++)
+  for (i = 0; i < MAX_OUTPUTS; i++)
   {
     // The input to the curves will be the transition number, altered to appear as -1000 to 1000.
     temp1 = (transition - 50) * 20; // 0 - 100 -> -1000 to 1000
@@ -902,7 +900,7 @@ void updateLimits(void)
   }
 
   // Update travel limits
-  for (i = 0; i < MIX_OUTPUTS; i++)
+  for (i = 0; i < MAX_OUTPUTS; i++)
   {
     config.limits[i].minimum = scaleMicros(config.minTravel[i]);
     config.limits[i].maximum = scaleMicros(config.maxTravel[i]);
@@ -955,13 +953,13 @@ void updateServos(void)
   uint8_t i;
   int16_t temp1 = 0; // Output value
 
-  for (i = 0; i < MIX_OUTPUTS; i++)
+  for (i = 0; i < MAX_OUTPUTS; i++)
   {
     // Servo reverse and trim for the eight physical outputs
     temp1 = config.channel[i].p1Value;
 
     // Reverse this channel for the eight physical outputs
-    if ((i <= MIX_OUTPUTS) && (config.servoReverse[i] == ON))
+    if ((i <= MAX_OUTPUTS) && (config.servoReverse[i] == ON))
     { 
       temp1 = -temp1;
     }

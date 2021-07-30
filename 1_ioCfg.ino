@@ -34,7 +34,7 @@
 // **************************************************************************
 
 #define MAX_RC_CHANNELS 8   // Maximum input channels from RX
-#define MAX_OUTPUTS 8      // Maximum output channels
+#define MAX_OUTPUTS 10      // Maximum output channels
 #define FLIGHT_MODES 2      // Number of flight profiles
 #define NUMBEROFAXIS 3      // Number of axis (Roll, Pitch, Yaw)
 #define NUMBEROFCURVES 6    // Number of curves available

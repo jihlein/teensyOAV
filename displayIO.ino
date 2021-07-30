@@ -144,12 +144,12 @@ void displayInOut(void)
       u8g2.clearBuffer();
     
       // Column 1
-      lcdDisplayText(478, 0,  3);
-      lcdDisplayText(479, 0, 13);
-      lcdDisplayText(480, 0, 23);
-      lcdDisplayText(481, 0, 33);
-      lcdDisplayText(482, 0, 43);
-      lcdDisplayText(483, 0, 53);
+      lcdDisplayText(480, 0,  3);
+      lcdDisplayText(481, 0, 13);
+      lcdDisplayText(482, 0, 23);
+      lcdDisplayText(483, 0, 33);
+      lcdDisplayText(484, 0, 43);
+      lcdDisplayText(485, 0, 53);
 
       itoa((monopolarThrottle / 20), pBuffer, 10);  u8g2.drawStr(25,  3, pBuffer);
       itoa(inputs[AILERON],          pBuffer, 10);  u8g2.drawStr(25, 13, pBuffer);
@@ -159,32 +159,32 @@ void displayInOut(void)
       itoa(inputs[AUX1],             pBuffer, 10);  u8g2.drawStr(25, 53, pBuffer);
     
       // Column 2
-      lcdDisplayText(484, 48,  3);
-      lcdDisplayText(485, 48, 13);
-      lcdDisplayText(477, 48, 23);
-      lcdDisplayText(468, 48, 33);
-      lcdDisplayText(469, 48, 43);
-      lcdDisplayText(470, 48, 53);   
+      lcdDisplayText(479, 52,  3);
+      lcdDisplayText(468, 52, 13);
+      lcdDisplayText(469, 52, 23);
+      lcdDisplayText(470, 52, 33);
+      lcdDisplayText(471, 52, 43);
+      lcdDisplayText(472, 52, 53);   
     
-      itoa(inputs[AUX2], pBuffer,10);  u8g2.drawStr(71,  3, pBuffer);
-      itoa(inputs[AUX3], pBuffer,10);  u8g2.drawStr(71, 13, pBuffer);
-      itoa(outputs[0],   pBuffer,10);  u8g2.drawStr(57, 33, pBuffer);
-      itoa(outputs[1],   pBuffer,10);  u8g2.drawStr(57, 43, pBuffer);
-      itoa(outputs[2],   pBuffer,10);  u8g2.drawStr(57, 53, pBuffer);
+      itoa(outputs[0], pBuffer,10);  u8g2.drawStr(61, 13, pBuffer);
+      itoa(outputs[1], pBuffer,10);  u8g2.drawStr(61, 23, pBuffer);
+      itoa(outputs[2], pBuffer,10);  u8g2.drawStr(61, 33, pBuffer);
+      itoa(outputs[3], pBuffer,10);  u8g2.drawStr(61, 43, pBuffer);
+      itoa(outputs[4], pBuffer,10);  u8g2.drawStr(61, 53, pBuffer);
     
       // Column 3
-      lcdDisplayText(471, 94,  3);
-      lcdDisplayText(472, 94, 13);
-      lcdDisplayText(473, 94, 23);
-      lcdDisplayText(474, 94, 33);
-      lcdDisplayText(475, 94, 43);
-      lcdDisplayText(476, 88, 53);
+      lcdDisplayText(473, 94,  3);
+      lcdDisplayText(474, 94, 13);
+      lcdDisplayText(475, 94, 23);
+      lcdDisplayText(476, 94, 33);
+      lcdDisplayText(477, 88, 43);
+      lcdDisplayText(478, 88, 53);
 
-      itoa(outputs[3], pBuffer, 10);  u8g2.drawStr(104,  3, pBuffer);
-      itoa(outputs[4], pBuffer, 10);  u8g2.drawStr(104, 13, pBuffer);
-      itoa(outputs[5], pBuffer, 10);  u8g2.drawStr(104, 23, pBuffer);
-      itoa(outputs[6], pBuffer, 10);  u8g2.drawStr(104, 33, pBuffer);
-      itoa(outputs[7], pBuffer, 10);  u8g2.drawStr(104, 43, pBuffer);
+      itoa(outputs[5], pBuffer, 10);  u8g2.drawStr(104,  3, pBuffer);
+      itoa(outputs[6], pBuffer, 10);  u8g2.drawStr(104, 13, pBuffer);
+      itoa(outputs[7], pBuffer, 10);  u8g2.drawStr(104, 23, pBuffer);
+      itoa(outputs[8], pBuffer, 10);  u8g2.drawStr(104, 33, pBuffer);
+      itoa(outputs[9], pBuffer, 10);  u8g2.drawStr(104, 43, pBuffer);
 
       // Display the transition number as 1.00 to 2.00
       uint8_t xLoc = 104;  // X location of transition display

@@ -146,6 +146,15 @@ void setupServos(void)
   if      (config.channel[7].motorMarker == MOTOR)  output7.attach(14, ONESHOTFREQ, ONESHOTMIN, ONESHOTMAX);
   else if (config.channel[7].motorMarker == ASERVO) output7.attach(14, ANALOGFREQ,  ANALOGMIN,  ANALOGMAX);
   else                                              output7.attach(14, DIGITALFREQ, DIGITALMIN, DIGITALMAX);
+
+  // PWM Pin 24
+  if      (config.channel[8].motorMarker == MOTOR)  output8.attach(24, ONESHOTFREQ, ONESHOTMIN, ONESHOTMAX);
+  else if (config.channel[8].motorMarker == ASERVO) output8.attach(24, ANALOGFREQ,  ANALOGMIN,  ANALOGMAX);
+  else                                              output8.attach(24, DIGITALFREQ, DIGITALMIN, DIGITALMAX);
+  // PWM Pin 28
+  if      (config.channel[9].motorMarker == MOTOR)  output9.attach(28, ONESHOTFREQ, ONESHOTMIN, ONESHOTMAX);
+  else if (config.channel[9].motorMarker == ASERVO) output9.attach(28, ANALOGFREQ,  ANALOGMIN,  ANALOGMAX);
+  else                                              output9.attach(28, DIGITALFREQ, DIGITALMIN, DIGITALMAX);
 }
 
 void send500HzServos(void)
@@ -158,6 +167,8 @@ void send500HzServos(void)
   if (config.channel[5].motorMarker == MOTOR)  output5.write((servoCmd[5] + 4) / 8);
   if (config.channel[6].motorMarker == MOTOR)  output6.write((servoCmd[6] + 4) / 8);
   if (config.channel[7].motorMarker == MOTOR)  output7.write((servoCmd[7] + 4) / 8);
+  if (config.channel[8].motorMarker == MOTOR)  output8.write((servoCmd[8] + 4) / 8);
+  if (config.channel[9].motorMarker == MOTOR)  output9.write((servoCmd[9] + 4) / 8);
 }
 
 void send250HzServos(void)
@@ -170,6 +181,8 @@ void send250HzServos(void)
   if (config.channel[5].motorMarker == DSERVO)  output5.write(servoCmd[5]);
   if (config.channel[6].motorMarker == DSERVO)  output6.write(servoCmd[6]);
   if (config.channel[7].motorMarker == DSERVO)  output7.write(servoCmd[7]);
+  if (config.channel[8].motorMarker == DSERVO)  output8.write(servoCmd[8]);
+  if (config.channel[9].motorMarker == DSERVO)  output9.write(servoCmd[9]);
 }
 
 void send50HzServos(void)
@@ -182,4 +195,6 @@ void send50HzServos(void)
   if (config.channel[5].motorMarker == ASERVO)  output5.write(servoCmd[5]);
   if (config.channel[6].motorMarker == ASERVO)  output6.write(servoCmd[6]);
   if (config.channel[7].motorMarker == ASERVO)  output7.write(servoCmd[7]);
+  if (config.channel[8].motorMarker == ASERVO)  output8.write(servoCmd[8]);
+  if (config.channel[9].motorMarker == ASERVO)  output9.write(servoCmd[9]);
 }
