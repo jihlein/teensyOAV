@@ -37,8 +37,9 @@
 
 // eePROM signature - change for each eePROM structure change to force factory reset or upgrade
 #define V1_5_B3_SIGNATURE 0x44          // EEPROM signature for V1.5 (V1.5 Beta 3+)
+#define V2p0_SIGNATURE    0x45          // EEPROM signature for V2.0 (teensyOAV with 10 outputs)
 
-#define MAGIC_NUMBER V1_5_B3_SIGNATURE  // Set current signature
+#define MAGIC_NUMBER V2p0_SIGNATURE     // Set current signature
 
 //************************************************************
 // Code
@@ -96,10 +97,10 @@ bool initialEEPROMConfigLoad(void)
   // config.setup holds the magic number from the current EEPROM
   switch(config.setup)
   {
-    case V1_5_B3_SIGNATURE:  // V1.5B3+
+    case V2p0_SIGNATURE:  // V2.0
       break;
       
-    default:                 // Unknown solution - restore to factory defaults
+    default:              // Unknown solution - restore to factory defaults
       // Load factory defaults
       setEEPROMDefaultConfig();
       updated = true;
