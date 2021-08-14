@@ -177,8 +177,8 @@ void tasks500Hz(void) {
   readGyros();
   readAccels();
   profileTransition();
-  imuUpdate(0.02f);
-  sensorPID(0.02f);
+  imuUpdate(0.002f);
+  sensorPID(0.002f);
   calculatePID();
   processMixer();
   updateServos();

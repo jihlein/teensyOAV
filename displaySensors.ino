@@ -53,10 +53,10 @@ void displaySensors(void)
       readAccels();
 
       // Refresh accSmooth values and AccVert
-      imuUpdate(0.02f);
+      imuUpdate(0.002f);
 
       // Update I-terms, average gyro values each loop
-      sensorPID(0.02f);
+      sensorPID(0.002f);
     }
     
     if (frame_20Hz) {
