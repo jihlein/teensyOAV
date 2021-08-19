@@ -204,12 +204,7 @@ void updateChOrder(void)
     {
       config.channelOrder[i] = pgm_read_byte(&JR[i]);
     }
-    else if (config.txSeq == MPXSEQ)
-    {
-      config.channelOrder[i] = pgm_read_byte(&MPX[i]);
-    }
-    // Otherwise load from custom channel order
-    else
+    else  // Otherwise load from custom channel order
     {
       config.channelOrder[i] = config.customChannelOrder[i];
     }

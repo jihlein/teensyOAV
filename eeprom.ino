@@ -36,7 +36,7 @@
 #define EEPROM_DATA_START_POS 0         // Make sure Rolf's signature is over-written for safety
 
 // eePROM signature - change for each eePROM structure change to force factory reset or upgrade
-#define V1_5_B3_SIGNATURE 0x44          // EEPROM signature for V1.5 (V1.5 Beta 3+)
+#define V2p0_SIGNATURE 0x50          // EEPROM signature for V2.0 (teensyOAV)
 #define V2p0_SIGNATURE    0x45          // EEPROM signature for V2.0 (teensyOAV with 10 outputs)
 
 #define MAGIC_NUMBER V2p0_SIGNATURE     // Set current signature
@@ -46,8 +46,7 @@
 //************************************************************
 
 const int8_t  JR[MAX_RC_CHANNELS]     PROGMEM = {0,1,2,3,4,5,6,7};  // JR/Spektrum channel sequence (TAERG123)
-const int8_t  FUTABA[MAX_RC_CHANNELS] PROGMEM = {1,2,0,3,4,5,6,7};  // Futaba channel sequence (AETRGF12)
-const int8_t  MPX[MAX_RC_CHANNELS]    PROGMEM = {1,2,3,5,0,4,6,7};  // Multiplex channel sequence (AER1TG23)
+const int8_t  FUTABA[MAX_RC_CHANNELS] PROGMEM = {2,0,1,3,4,5,6,7};  // Futaba channel sequence (AETRGF12)
   
 void saveConfigToEEPROM(void)
 {

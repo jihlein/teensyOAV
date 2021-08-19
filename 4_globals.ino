@@ -38,7 +38,7 @@
 #define LED_ON  digitalWrite(STATUS_LED, 1)
 #define LED_OFF digitalWrite(STATUS_LED, 0)
 
-uint8_t loopCount = 0;
+uint8_t loopCount = 1;
 bool    overdue   = false;
 bool    updated   = false;
 
