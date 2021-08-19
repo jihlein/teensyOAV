@@ -87,7 +87,7 @@ enum rcChannels    {THROTTLE = 0, AILERON, ELEVATOR, RUDDER, GEAR, AUX1, AUX2, A
 enum reference     {NO_ORIENT = 0, EARTH, MODEL};
 enum rpyArrayIndex {ROLL = 0, PITCH, YAW, ZED};
 enum rxModes       {SBUS = 0, SPEKTRUM, CPPM_MODE};
-enum rxSequ        {JRSEQ = 0, FUTABASEQ, MPXSEQ, CUSTOM};
+enum rxSequ        {JRSEQ = 0, FUTABASEQ, CUSTOM};
 enum safety        {ARMED = 0, ARMABLE}; 
 //                  THROTTLE, CURVE A, CURVE B, COLLECTIVE, THROTTLE, AILERON, ELEVATOR, RUDDER, GEAR, AUX1,  AUX2,  AUX3,  ROLLGYRO, PITCHGYO, YAWGYRO, ACCSMOOTH, PITCHSMOOTH, ROLLACC, PITCHACC, AccZ,  NONE
 enum sources       {SRC1,     SRC2,    SRC3,    SRC4,       SRC5,     SRC6,    SRC7,     SRC8,   SRC9, SRC10, SRC11, SRC12, SRC13,    SRC14,    SRC15,   SRC16,     SRC17,       SRC18,   SRC19,    SRC20, NOMIX};

@@ -133,15 +133,12 @@ const char RXMode2[]         PROGMEM = "CPPM";
 // Channel order
 const char RCMenuItem6[]     PROGMEM = "JR/Spektrum";
 const char RCMenuItem7[]     PROGMEM = "Futaba"; 
-const char RCMenuItem8[]     PROGMEM = "Multiplex"; 
-const char RCMenuItem9[]     PROGMEM = "Custom"; 
+const char RCMenuItem8[]     PROGMEM = "Custom"; 
 // General text
 const char MixerMenuItem0[]  PROGMEM = "Orientation:";
 const char GeneralText100[]  PROGMEM = "Tail sitter:"; 
-const char Contrast[]        PROGMEM = "Contrast:";
 const char AutoMenuItem2[]   PROGMEM = "Safety:";
 const char GeneralText2[]    PROGMEM = "Disarm time:";
-const char GeneralText3[]    PROGMEM = "PWM rate:";
 const char GeneralText6[]    PROGMEM = "Accel LPF:";
 const char GeneralText16[]   PROGMEM = "Gyro LPF:";
 const char GeneralText7[]    PROGMEM = "AL correct:";
@@ -219,14 +216,14 @@ const char MixerItem60[]     PROGMEM = "Linear";
 const char MixerItem61[]     PROGMEM = "Sine";
 const char MixerItem62[]     PROGMEM = "SqrtSine";
 // RC channel text
-const char ChannelRef0[]     PROGMEM = "Thr";
-const char ChannelRef1[]     PROGMEM = "Ail"; 
-const char ChannelRef2[]     PROGMEM = "Ele"; 
-const char ChannelRef3[]     PROGMEM = "Rud"; 
-const char ChannelRef4[]     PROGMEM = "Gear"; 
-const char ChannelRef5[]     PROGMEM = "Aux1"; 
-const char ChannelRef6[]     PROGMEM = "Aux2"; 
-const char ChannelRef7[]     PROGMEM = "Aux3"; 
+const char ChannelRef0[]     PROGMEM = "1";
+const char ChannelRef1[]     PROGMEM = "2"; 
+const char ChannelRef2[]     PROGMEM = "3"; 
+const char ChannelRef3[]     PROGMEM = "4"; 
+const char ChannelRef4[]     PROGMEM = "5"; 
+const char ChannelRef5[]     PROGMEM = "6"; 
+const char ChannelRef6[]     PROGMEM = "7"; 
+const char ChannelRef7[]     PROGMEM = "8"; 
 const char ChannelRef8[]     PROGMEM = "None";
 const char ChannelRef10[]    PROGMEM = "Thr";
 const char ChannelRef12[]    PROGMEM = "Ele"; 
@@ -407,14 +404,14 @@ const char O5[]              PROGMEM = "Ax1:";
 const char O6[]              PROGMEM = "Ax2:";
 const char O7[]              PROGMEM = "Ax3:";
 // Custom channel inputs
-const char Ch1[]             PROGMEM = "TX chan. 1";
-const char Ch2[]             PROGMEM = "TX chan. 2";
-const char Ch3[]             PROGMEM = "TX chan. 3";
-const char Ch4[]             PROGMEM = "TX chan. 4";
-const char Ch5[]             PROGMEM = "TX chan. 5";
-const char Ch6[]             PROGMEM = "TX chan. 6";
-const char Ch7[]             PROGMEM = "TX chan. 7";
-const char Ch8[]             PROGMEM = "TX chan. 8";
+const char Ch1[]             PROGMEM = "TX Thr Channel:";
+const char Ch2[]             PROGMEM = "TX Ail Channel:";
+const char Ch3[]             PROGMEM = "TX Ele Channel:";
+const char Ch4[]             PROGMEM = "TX Rud Channel:";
+const char Ch5[]             PROGMEM = "TX Gear Channel:";
+const char Ch6[]             PROGMEM = "TX Aux1 Channel:";
+const char Ch7[]             PROGMEM = "TX Aux2 Channel:";
+const char Ch8[]             PROGMEM = "TX Aux3 Channel:";
 
 const char* textMenu[] = 
   {
@@ -559,14 +556,14 @@ const char* textMenu[] =
     ChannelRef7,
     ChannelRef8,
     ChannelRef10,
-    ChannelRef12,            // 105 to 115 Ch. names  // 114, 115 Ch.ref abbreviations HJI
+    ChannelRef12,            // 105 to 115 Ch. names
     //
     Dummy0,
     Dummy0,
     Dummy0,                  // 116 to 118 Spare
     //
     GeneralText5,
-    Random1,                 // 119 to 120 Sync RC, High HJI
+    Random1,                 // 119 to 120 Sync RC, High
     //
     Status0,
     Status2,                 // 121 to 122 Press any button 
@@ -582,17 +579,18 @@ const char* textMenu[] =
     //                                
     RCMenuItem6,
     RCMenuItem7,
-    RCMenuItem8,
-    RCMenuItem9,             // 130 to 133 JR/Futaba/MPX/CUSTOM
+    RCMenuItem8,             // 130 to 132 JR/Futaba/CUSTOM
+    //
+    Dummy0,                  // 133 Spare
     //
     Status3,                 // 134 Battery
     //
     WizardText0,
     WizardText1,
-    WizardText2,             // 135 to 137 HJI
+    WizardText2,             // 135 to 137
     //
     Status4,
-    Status5,                 // 138 to 139 HJI
+    Status5,                 // 138 to 139
     //
     Dummy0,                  // 140 Spare
     //
@@ -721,7 +719,7 @@ const char* textMenu[] =
     Dummy0,
     Dummy0,                  // 240 to 252 Spare
     //
-    ChannelRef8,             // 253 + NONE HJI
+    ChannelRef8,             // 253
     //
     MixerItem40,
     MixerItem41,
@@ -748,7 +746,7 @@ const char* textMenu[] =
     //
     Random10,
     Random11,
-    Random12,                 // 270 - 272 HJI
+    Random12,                 // 270 - 272
     //  
     PRESET_1,
     PRESET_2,

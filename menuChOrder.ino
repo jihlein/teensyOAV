@@ -33,8 +33,8 @@
 // * Defines
 // ************************************************************
 
-#define CHITEMS   8   // Number of menu items
-#define CHOFFSET 70   // LCD offsets for TX number text
+#define CHITEMS    8  // Number of menu items
+#define CHOFFSET 100  // LCD offsets for TX number text
 #define CHSTART  384  // Start of Menu text items (channel names)
 #define CHTEXT   105  // Start of value text items (TX channel numbers)
 

@@ -59,15 +59,15 @@ void displayRCInput(void)
     
       u8g2.clearBuffer();
     
-      lcdDisplayText(114, 0,  0);  // Throttle
-      lcdDisplayText( 32, 0, 10);
-      lcdDisplayText(115, 0, 20);
-      lcdDisplayText( 35, 0, 30);
+      lcdDisplayText(480, 0,  0);  // Throttle
+      lcdDisplayText(481, 0, 10);
+      lcdDisplayText(482, 0, 20);
+      lcdDisplayText(483, 0, 30);
 
-      lcdDisplayText(109, 70,  0);  // Gear
-      lcdDisplayText(110, 70, 10);
-      lcdDisplayText(111, 70, 20);
-      lcdDisplayText(112, 70, 30);
+      lcdDisplayText(484, 70,  0);  // Gear
+      lcdDisplayText(485, 70, 10);
+      lcdDisplayText(486, 70, 20);
+      lcdDisplayText(487, 70, 30);
 
       itoa(monopolarThrottle,pBuffer,10);
       u8g2.setCursor(37,  0); u8g2.print(pBuffer);
