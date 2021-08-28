@@ -478,8 +478,8 @@ const char* textMenu[] =
     P4text,
     P5text,                  // 48 to 52 P1, P1.n, P2, P1 to P1.n, P1.n to P2 
     
-    Safety1,
-    Safety2,                 // 53, 54 Safety  
+    Dummy0,
+    Dummy0,                  // 53, 54 Spare  
     //
     Random1,                 // 55 High
     //
@@ -705,19 +705,20 @@ const char* textMenu[] =
     MOUT9,
     MOUT10,                  // 230 to 239 Sources OUT1 - OUT10,
     //
+    Safety2,
+    Safety1,
+    Chan4,
+    Chan5,
+    Chan6,
+    Chan7,                   // 240 to 245 Safety
+    //
     Dummy0,
     Dummy0,
     Dummy0,
     Dummy0,
     Dummy0,
     Dummy0,
-    Dummy0,
-    Dummy0,
-    Dummy0,
-    Dummy0,
-    Dummy0,
-    Dummy0,
-    Dummy0,                  // 240 to 252 Spare
+    Dummy0,                  // 246 to 252 Spare
     //
     ChannelRef8,             // 253
     //
@@ -1023,7 +1024,9 @@ void idleScreen(void)
   
   else if (generalError & (1 << NO_SIGNAL))      // No signal
   {
-    lcdDisplayText(75, 35, 43);  // NO SIGNAL
+    u8g2.setFont(u8g2_font_helvR14_tr);
+    lcdDisplayText(75, 12, 43);  // NO SIGNAL
+    u8g2.setFont(u8g2_font_helvR08_tr);
   }
   
   else if (generalError & (1 << THROTTLE_HIGH))  // Throttle high

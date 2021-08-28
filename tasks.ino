@@ -29,26 +29,10 @@
 // *
 // **************************************************************************
 
-// Ugly!! But will do for now
-
 uint8_t  disarmSeconds = 0;
 
 void tasks50Hz(void) 
-{
-  //************************************************************
-  //* Alarms
-  //************************************************************
-
-  // If RC signal is overdue, signal RX error message
-  if (overdue)
-  {
-    generalError |= (1 << NO_SIGNAL);  // Set NO_SIGNAL bit
-  }
-  else
-  {
-    generalError &= ~(1 << NO_SIGNAL);  // Clear NO_SIGNAL bit
-  }
-
+{ 
   //************************************************************
   //* Measure incoming RC rate and flag no signal
   //************************************************************
@@ -56,10 +40,45 @@ void tasks50Hz(void)
   // Check to see if the RC input is overdue (50ms)
   if (rcTimeout > RC_OVERDUE)
   {
-    overdue = true;
-    rcTimeout = RC_OVERDUE;
+    overdue   = true;
+    rcTimeout = RC_OVERDUE + 1;
   }
 
+  //************************************************************
+  //* Alarms
+  //************************************************************
+
+  // If RC signal is overdue, signal RX error message
+  if (overdue)
+  {
+    generalError |= (1 << NO_SIGNAL);   // Set NO_SIGNAL bit
+	generalError |= (1 << DISARMED);    // Set flags to disarmed
+    LED_OFF;                            // Signal that FC is now disarmed
+  }
+  // RC signal received normally
+    else
+  {
+    generalError &= ~(1 << NO_SIGNAL);  // Clear NO_SIGNAL bit
+  }
+
+  // Turn on buzzer if in alarm state (BUZZER_ON is oscillating)
+  if (((generalError & (1 << LVA_ALARM)) ||      // Low battery
+       (generalError & (1 << NO_SIGNAL)) ||      // No signal
+       (generalError & (1 << THROTTLE_HIGH))) && // Throttle high
+       (alarmFlags & (1 << BUZZER_ON))
+     )
+  {
+    // Check buzzer mode first
+    if (config.buzzer == ON)
+    {
+      // HJI LVA = 1;
+    }
+  }
+  else
+  {
+    // HJI LVA = 0;
+  }
+  
   //************************************************************
   //* Arm/disarm handling
   //************************************************************
@@ -70,8 +89,7 @@ void tasks50Hz(void)
     // Manual arm/disarm
     // If sticks not at extremes, reset manual arm/disarm timer
     // Sticks down and inside = armed. Down and outside = disarmed
-    if (
-        ((-ARM_TIMER_RESET_1 < rcInputs[AILERON])  && (rcInputs[AILERON]  < ARM_TIMER_RESET_1)) ||
+    if (((-ARM_TIMER_RESET_1 < rcInputs[AILERON])  && (rcInputs[AILERON]  < ARM_TIMER_RESET_1)) ||
         ((-ARM_TIMER_RESET_1 < rcInputs[ELEVATOR]) && (rcInputs[ELEVATOR] < ARM_TIMER_RESET_1)) ||
         ((-ARM_TIMER_RESET_1 < rcInputs[RUDDER])   && (rcInputs[RUDDER]   < ARM_TIMER_RESET_1)) ||
          (ARM_TIMER_RESET_2  < monopolarThrottle))
@@ -159,8 +177,8 @@ add_log(TIMER);
     }
   } // if (Config.ArmMode == ARMABLE)
     
-  // Arm when ArmMode is OFF
-  else 
+  // Arm when Armed mode is selected
+  else if (config.armMode == ARMED)
   {
     // If disarmed, arm
     if (generalError & (1 << DISARMED))
@@ -169,6 +187,27 @@ add_log(TIMER);
     }
       
     LED_ON;
+  }
+  // Handle cases where RC arming has been selected
+  else
+  {
+    // Check for rising edge of RC input delegated to be the arming input
+    if ((rcInputs[config.armChannel] > 500) && (oldArmChannel <= 500))
+    {
+      // If disarmed and throttle below minimum, arm
+      if ((generalError & (1 << DISARMED)) && (monopolarThrottle < THROTTLEIDLE))
+      {
+        generalError &= ~(1 << DISARMED);     // Set flags to armed
+        LED_ON;                               // Signal the FC is now armed
+      }
+      // If armed, disarm
+      else if (~(generalError & (1 << DISARMED)))
+      {
+        generalError |= (1 << DISARMED);      // Set flags to disarmed
+        LED_OFF;                              // Signal that FC is now disarmed
+      }
+	}
+	oldArmChannel = rcInputs[config.armChannel];
   }
 }
 

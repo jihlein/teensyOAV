@@ -50,8 +50,8 @@
    
 const uint16_t rcMenuText[2][RCITEMSOFFSET] PROGMEM = 
 {
-  {RCTEXT, 130, 105, 0, 0, 0, 0, 0, 68, 0},              // RC setup
-  {GENERALTEXT, 320, 53, 0, 0, 37, 37, 37, 0, 273, 68},  // General
+  {RCTEXT, 130, 105, 0, 0, 0, 0, 0, 68, 0},               // RC setup
+  {GENERALTEXT, 320, 240, 0, 0, 37, 37, 37, 0, 273, 68},  // General
 };
 
 const uint16_t rcMenuOffsets[2][RCITEMSOFFSET] PROGMEM =
@@ -66,7 +66,7 @@ const menuRange_t rcMenuRanges[2][RCITEMSOFFSET] PROGMEM =
     // RC setup (12)                // Min, Max, Increment, Style, Default
     {SBUS, CPPM_MODE, 1 ,1, SBUS},  // Receiver type (SBUS to CPPM)  
     {JRSEQ, CUSTOM, 1, 1, JRSEQ},   // Channel order
-    {THROTTLE ,AUX3, 1, 1, GEAR},   // Profile select channel
+    {GEAR ,AUX3, 1, 1, GEAR},       // Profile select channel
     {0, 40, 1, 0, 0},               // Outbound TransitionSpeed 0 to 40
     {0, 40, 1, 0, 0},               // Inbound TransitionSpeed 0 to 40
     {0, 99, 1, 0, 0},               // Transition P1 point
@@ -79,7 +79,7 @@ const menuRange_t rcMenuRanges[2][RCITEMSOFFSET] PROGMEM =
     // General (12)
     {UP_BACK, RIGHT_FRONT, 1, 1, UP_BACK},  // Orientation (P2)
     {NO_ORIENT, MODEL, 1, 1, NO_ORIENT},    // Orientation usage (Tail sitter)
-    {ARMED, ARMABLE, 1, 1, ARMABLE},        // Arming mode Armable/Armed
+    {ARMABLE, SF_AUX3, 1, 1, ARMABLE},      // Arming mode Armable/Armed/GEAR/AUX1/AUX2/AUX3
     {0, 127, 1, 0, 30},                     // Auto-disarm enable
     {0, 8, 1, 1, 0},                        // Low battery cell voltage
     {HZ5, HZ260, 1, 1, HZ44},               // MPU6050 LPF. Default is 44Hz
@@ -194,12 +194,45 @@ void menuRcSetup(uint8_t section)
       // Refresh channel order
       updateChOrder();
 
-      if (config.armMode == ARMABLE)
+      // If safety mode changed to anything other than "Armed", disarm on exit
+      if (config.armMode != ARMED)
       {
         generalError |= (1 << DISARMED); // Set flags to disarmed
         LED_OFF;
       }
 
+      // Calculate arming channel number from Arm setting
+      switch (config.armMode)
+      {
+        case SF_GEAR:
+          config.armChannel = GEAR;
+          break;
+
+        case SF_AUX1:
+          config.armChannel = AUX1;
+          break;
+
+        case SF_AUX2:
+          config.armChannel = AUX2;
+          break;
+
+        case SF_AUX3:
+          config.armChannel = AUX3;
+          break;
+
+        default:
+          config.armChannel = NOCHAN;
+          break;
+      }
+
+      // If user has selected the same channel for Profile AND Arming, bump Arm setting back to ARMABLE,
+      // clear arm channel
+      if (config.flightChan == config.armChannel)
+      {
+        config.armMode    = ARMABLE;
+        config.armChannel = NOCHAN;
+      }
+      
       // Work out the P1 orientation from the user's P2 orientation setting
       config.orientationP1 = (int8_t)pgm_read_byte(&p1OrientationLUT[config.orientationP2]);
 

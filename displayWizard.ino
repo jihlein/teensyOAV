@@ -95,7 +95,7 @@ void displaySticks(void)
       if (!calibrateDone)
       {
         // Display warning if sticks not centered or no RC signal while not started calibrating
-        if ((sbusRx.lost_frame() || sbusRx.failsafe()) && !calibrateStarted)
+        if (overdue && !calibrateStarted)
         {
           lcdDisplayText(135, 16 ,43);  // "No RX signal?"
         }

@@ -934,10 +934,10 @@ void updateLimits(void)
   // Update MPU6050 LPF and reverse sense of menu items
   mpu.setDLPFMode(6 - config.mpu6050LPF);
 
-  // If mode switched to ARMABLE, make sure to disarm
-  if (config.armMode == ARMABLE)
+  // If Armed setting is not ARMED    // HJI 1.7
+  if (config.armMode != ARMED)        // HJI 1.7
   {
-    generalError |= (1 << DISARMED); // Set flags to disarmed
+    generalError |= (1 << DISARMED);  // Set flags to disarmed
     LED_OFF;
   }
 
@@ -948,6 +948,7 @@ void updateLimits(void)
 }
 
 // Update servos from the mixer config.channel[i].p1Value data, add offsets and enforce travel limits
+// Input values are -1250 to 1250.  Output values are 2500 to 5000
 void updateServos(void)
 {
   uint8_t i;
@@ -967,8 +968,12 @@ void updateServos(void)
     // Add offset value to restore to system compatible value
     temp1 += 3750;
 
+    // Bounds check                  // HJI 1.7
+    if (temp1 < 2500) temp1 = 2500;  // HJI 1.7
+    if (temp1 > 5000) temp1 = 5000;  // HJI 1.7
+    
     // Transfer value to servo
-    servoOut[i] = temp1;
+    servoOut[i] = (uint16_t)temp1;   // HJI 1.7
   }
 }
 
@@ -1014,12 +1019,17 @@ int16_t scale32(int16_t value16, int16_t multiplier16)
 }
 
 // Scale percentages to microsecond (position)
+// -125% to 125% is 875 to 2125 us or above and below the ESC cal limits
 int16_t scaleMicros(int8_t value)
 {
   int16_t temp16;
 
-  // 100% = 1000 to 2000
-  temp16 = (int16_t)((value * 5) + SERVO_CENTER); // SERVO_CENTER = 1500
+  // Bounds check                  // HJI 1.7
+  if (value < -125) value = -125;  // HJI 1.7
+  if (value > 125)  value =  125;  // HJI 1.7
+
+  // 0% = 1000, 100% = 2000
+  temp16 = (int16_t)((value * 5) + SERVO_CENTER);  // SERVO_CENTER = 1500
 
   return temp16;
 }
