@@ -83,6 +83,7 @@ int16_t pidAccels[FLIGHT_MODES][NUMBEROFAXIS];
 //************************************************************
 
 int16_t monopolarThrottle;                 // Monopolar throttle
+int16_t oldArmChannel;                     // Past value of arm switch (used for switch arming only)
 int16_t rcInputs[MAX_RC_CHANNELS + 1];     // Normalised (+/- 1250) RC inputs
 int16_t rawChannels[MAX_RC_CHANNELS + 1];  // Raw RC inputs
 

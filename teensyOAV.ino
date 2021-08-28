@@ -77,6 +77,8 @@ IntervalTimer execTimer;
 #define COUNT_5HZ   200
 #define COUNT_1HZ   1000
 
+#define RC_OVERDUE  750  // Number of 1 mSec ticks before RC will be overdue = 750 mSec
+
 uint16_t frameCounter = 0;
 uint8_t frame_500Hz   = false;
 uint8_t frame_250Hz   = false;
@@ -90,7 +92,7 @@ uint8_t frame_1Hz     = false;
 uint16_t armTimer          = 0;
 uint16_t disarmTimer       = 0;
 uint16_t gyroTimeout       = 0;
-uint16_t rcTimeout         = 0;
+uint16_t rcTimeout         = RC_OVERDUE;
 uint16_t statusSeconds     = 0;
 uint16_t transitionTimeout = 0;
 uint16_t updateStatusTimer = 0;
@@ -114,6 +116,7 @@ int16_t transitionCounter = 0;
 // Flags
 volatile uint8_t flightFlags  = 0;
 volatile uint8_t generalError = 0;
+volatile uint8_t alarmFlags   = 0;
 
 // Global Buffers
 #define PBUFFER_SIZE 25

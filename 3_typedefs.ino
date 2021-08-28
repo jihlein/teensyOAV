@@ -238,9 +238,10 @@ typedef struct
   // Output offsets (64)[685] #$(64) [611]
   curve_t   offsets[MAX_OUTPUTS];
   
-  // Misc (1)[749] #$(1)[675]
+  // Misc (2)[749] #$(1)[675]
   int8_t    elevatorPol;                    // Elevator RC input polarity
+  int8_t    armChannel;                     // RC-based arming channel selection
 
-  // [750] #$[676]
+  // [751]
 
 } CONFIG_STRUCT;

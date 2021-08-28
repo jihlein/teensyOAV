@@ -323,12 +323,16 @@ void sensorPID(float period)
 // Run just before PWM output, using averaged data
 void calculatePID(void)
 {
-  int32_t pidGyroTemp1 = 0;     // P1
-  int32_t pidGyroTemp2 = 0;     // P2
-  int32_t pidAccelTemp1 = 0;    // P
-  int32_t pidAccelTemp2 = 0;    // I
+  int32_t pidGyroTemp1    = 0;  // P1
+  int32_t pidGyroTemp2    = 0;  // P2
+  int32_t pidAccelTemp1   = 0;  // P
+  int32_t pidAccelTemp2   = 0;  // I
   int32_t pidGyroIActual1 = 0;  // Actual unbound i-terms P1
   int32_t pidGyroIActual2 = 0;  // P2
+  int32_t p1PGain         = 0;  // HJI 1.7
+  int32_t p2PGain         = 0;  // HJI 1.7
+  int32_t p1IGain         = 0;  // HJI 1.7
+  int32_t p2IGain         = 0;  // HJI 1.7
   int8_t  axis = 0;
   int8_t i = 0;
 
@@ -391,20 +395,26 @@ void calculatePID(void)
     // Calculate PID gains
     //************************************************************
 
-    // Gyro P-term                                    // Profile P1
-    pidGyroTemp1 += gyroAdc[axis] * pGain[P1][axis];  // Multiply P-term (Max gain of 127)
-    pidGyroTemp1  = pidGyroTemp1 * (int32_t)3;        // Multiply by 3
+    // Promote gain variables            // HJI 1.7
+    p1PGain = (int32_t)pGain[P1][axis];  // HJI 1.7
+    p1IGain = (int32_t)iGain[P1][axis];  // HJI 1.7
+    p2PGain = (int32_t)pGain[P2][axis];  // HJI 1.7
+    p2IGain = (int32_t)iGain[P2][axis];  // HJI 1.7
+
+    // Gyro P-term                                       // Profile P1
+    pidGyroTemp1 += gyroAdc[axis] * p1PGain;             // Multiply P-term (Max gain of 127)
+    pidGyroTemp1  = pidGyroTemp1 * (int32_t)3;           // Multiply by 3
 
     // Gyro I-term
-    pidGyroIActual1 = integralGyro[P1][axis] * iGain[P1][axis];  // Multiply I-term (Max gain of 127)
-    pidGyroIActual1 = pidGyroIActual1 >> 5;                      // Divide by 32
+    pidGyroIActual1 = integralGyro[P1][axis] * p1IGain;  // Multiply I-term (Max gain of 127)
+    pidGyroIActual1 = pidGyroIActual1 >> 5;              // Divide by 32
 
-    // Gyro P-term                                    // Profile P2
-    pidGyroTemp2 += gyroAdc[axis] * pGain[P2][axis];
+    // Gyro P-term                                       // Profile P2
+    pidGyroTemp2 += gyroAdc[axis] * p2PGain;
     pidGyroTemp2  = pidGyroTemp2 * (int32_t)3;
 
     // Gyro I-term
-    pidGyroIActual2 = integralGyro[P2][axis] * iGain[P2][axis];
+    pidGyroIActual2 = integralGyro[P2][axis] * p2IGain;
     pidGyroIActual2 = pidGyroIActual2 >> 5;
 
     //************************************************************

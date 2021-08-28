@@ -42,23 +42,22 @@
 #define NUMBEROFORIENTS 24  // Number board orientations
 #define NUMBEROFSOURCES 21  // Number of universal input sources
 
-#define MOTOR_0  1100        // PWM value to produce a 1.1ms throttle pulse regardless of pulse width mode
-#define MOTOR_100 1900       // PWM value to produce a 1.9ms throttle pulse regardless of pulse width mode
-#define MOTORMIN 1000        // PWM value for throttle cut. 1000 or 1.0ms regardless of pulse width mode
-#define SERVO_CENTER 1500    // Servo center position. 1500us
-#define THROTTLEIDLE 50      // Throttle value below which is considered idle
-#define THROTTLEMIN 1000     // Minimum throttle input offset value. 3750-1000 = 2750 or 1.1ms.
-                             // Not to be confused with MOTORMIN which is a PWM value.
-#define THROTTLEOFFSET 1250  // Mixer offset needed to reduce the output center to MOTORMIN
+#define MOTOR_0           1100  // PWM value to produce a 1.1 mSec throttle pulse regardless of pulse width mode
+#define MOTOR_100         1900  // PWM value to produce a 1.9 mSec throttle pulse regardless of pulse width mode
+#define MOTORMIN          1000  // PWM value for throttle cut. 1000 or 1.0 mSec regardless of pulse width mode
+#define SERVO_CENTER      1500  // Servo center position. 1500 uSec
+#define THROTTLEIDLE        50  // Throttle value below which is considered idle
+#define THROTTLEMIN       1000  // Minimum throttle input offset value. 3750-1000 = 2750 or 1.1 mSec
+                                // Not to be confused with MOTORMIN which is a PWM value.
+#define THROTTLEOFFSET    1250  // Mixer offset needed to reduce the output center to MOTORMIN
 
-#define ARM_TIMER 1000         // Amount of time the sticks must be held to trigger arm. Currently one second.
-#define ARM_TIMER_RESET_1 960  // RC position to reset timer for aileron, elevator and rudder
-#define ARM_TIMER_RESET_2 50   // RC position to reset timer for throttle
-#define DISARM_TIMER 3000      // Amount of time the sticks must be held to trigger disarm. Currently three seconds.
-#define RC_OVERDUE 50          // Number of 1mSec ticks before RC will be overdue = 50ms
-#define SECOND_TIMER 1000      // Unit of timing for seconds
+#define ARM_TIMER         1000  // Amount of time the sticks must be held to trigger arm. Currently one second.
+#define ARM_TIMER_RESET_1  960  // RC position to reset timer for aileron, elevator and rudder
+#define ARM_TIMER_RESET_2   50  // RC position to reset timer for throttle
+#define DISARM_TIMER      3000  // Amount of time the sticks must be held to trigger disarm. Currently three seconds.
+#define SECOND_TIMER      1000  // Unit of timing for seconds
   
-#define LOGLENGTH  20        // Log length for debugging
+#define LOGLENGTH           20  // Log length for debugging
 
 //***********************************************************
 // Enumeration
@@ -88,7 +87,7 @@ enum reference     {NO_ORIENT = 0, EARTH, MODEL};
 enum rpyArrayIndex {ROLL = 0, PITCH, YAW, ZED};
 enum rxModes       {SBUS = 0, SPEKTRUM, CPPM_MODE};
 enum rxSequ        {JRSEQ = 0, FUTABASEQ, CUSTOM};
-enum safety        {ARMED = 0, ARMABLE}; 
+enum safety        {ARMABLE = 0, ARMED, SF_GEAR, SF_AUX1, SF_AUX2, SF_AUX3}; 
 //                  THROTTLE, CURVE A, CURVE B, COLLECTIVE, THROTTLE, AILERON, ELEVATOR, RUDDER, GEAR, AUX1,  AUX2,  AUX3,  ROLLGYRO, PITCHGYO, YAWGYRO, ACCSMOOTH, PITCHSMOOTH, ROLLACC, PITCHACC, AccZ,  NONE
 enum sources       {SRC1,     SRC2,    SRC3,    SRC4,       SRC5,     SRC6,    SRC7,     SRC8,   SRC9, SRC10, SRC11, SRC12, SRC13,    SRC14,    SRC15,   SRC16,     SRC17,       SRC18,   SRC19,    SRC20, NOMIX};
 enum transitState  {TRANS_P1 = 0, TRANS_P1_TO_P1N_START, TRANS_P1N_TO_P1_START, TRANS_P1_TO_P2_START, TRANS_P1N, TRANSITIONING, TRANS_P2_TO_P1_START, TRANS_P1N_TO_P2_START, TRANS_P2_TO_P1N_START, TRANS_P2};

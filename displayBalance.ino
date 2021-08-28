@@ -57,8 +57,8 @@ void displayBalance(void)
     if (count > 10)
     {
       // Convert acc signal to a pixel position
-      xPos = accelSmooth[PITCH] + 32;
-      yPos = accelSmooth[ROLL]  + 64;
+      xPos = -accelSmooth[PITCH] + 32;
+      yPos = -accelSmooth[ROLL]  + 64;
 
       if (xPos < 0)   xPos = 0;
       if (xPos > 64)  xPos = 64;
