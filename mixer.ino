@@ -544,7 +544,7 @@ void processMixer(void)
 
     // Save solution for this channel. Note that this contains cross-mixed data from the *last* cycle
     config.channel[i].p1Value = p1Solution;
-    config.channel[i].p1Value = p1Solution;
+    config.channel[i].p2Value = p2Solution;
 
   } // Mixer loop: for (i = 0; i < MAX_OUTPUTS; i++)
 
