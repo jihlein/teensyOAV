@@ -32,6 +32,7 @@
 #include <DSMRX.h>
 #include <MPU6050.h>
 #include <myPWMServo.h>
+#include <PPMReader.h>
 #include <sbus.h>
 #include <U8g2lib.h>
 #include <Wire.h>
@@ -46,6 +47,11 @@ MPU6050 mpu;
 SbusRx sbusRx(&Serial3);
 
 DSM1024 dsm;
+
+byte ppmPin = 15;
+byte numberOfPPMChannels = 6;
+
+PPMReader ppm(ppmPin, numberOfPPMChannels);
 
 myPWMServo output0;
 myPWMServo output1;
@@ -98,10 +104,10 @@ uint16_t transitionTimeout = 0;
 uint16_t updateStatusTimer = 0;
 
 // Button Pins
-#define BUTTON1 20
-#define BUTTON2 21
-#define BUTTON3 22
-#define BUTTON4 23
+#define BUTTON1 23
+#define BUTTON2 22
+#define BUTTON3 21
+#define BUTTON4 20
 
 uint8_t pinb = 0xFF;
 
