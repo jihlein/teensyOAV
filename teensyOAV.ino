@@ -32,9 +32,25 @@
 #include <DSMRX.h>
 #include <MPU6050.h>
 #include <myPWMServo.h>
-#include <sbus.h>
+#include <PPMReader.h>
 #include <U8g2lib.h>
 #include <Wire.h>
+
+// At the moment, there are some questions/issues revolving around the Arduino sBus
+// library versions.  Version 2.1.2, the lastest, runs fine with FrSky sBus, but does
+// not work with Futaba sBus.  Futaba sBus, however, does work with an older version,
+// version 2.0.0.  No newer versions work with Futaba.  Issue "might" be related to the
+// inclusion of SBUS2 headers, but that is as of yet unproven.
+//
+// So for now, uncomment the 2p1p2 include line when using FrSky, and comment  the line
+// for the 2p0p0 include.  Do the opposite when using Futaba.  Not a good long term
+// solution, but....
+
+// Uncomment for FrSky
+#include <sbus2p1p2.h>
+
+// Uncomment for Futaba
+// #include <sbus2p0p0.h>
 
 // Uncomment only one of the following OLED dislay drivers:
 // SPI Drivers:
@@ -46,6 +62,11 @@ MPU6050 mpu;
 SbusRx sbusRx(&Serial3);
 
 DSM1024 dsm;
+
+byte ppmPin = 15;
+byte numberOfPPMChannels = 6;
+
+PPMReader ppm(ppmPin, numberOfPPMChannels);
 
 myPWMServo output0;
 myPWMServo output1;

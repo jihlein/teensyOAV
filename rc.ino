@@ -35,6 +35,12 @@
 
 #define NOISE_THRESH 10  // Max RX noise threshold
 
+// ************************************************************
+// * Variables
+// ************************************************************
+
+byte goodPPMSignal = 0;
+
 //************************************************************
 // Code
 //************************************************************
@@ -51,7 +57,7 @@ void rxGetChannels(void)
     {
       for (uint8_t i = 0; i < MAX_RC_CHANNELS; i++) 
       {
-        rawChannels[i] = (int16_t)((float)(sbusRx.rx_channels()[config.channelOrder[i]] - 1024) * 1.22f);
+        rawChannels[i] = (sbusRx.rx_channels()[config.channelOrder[i]] - 1024) * 1.22f;
         
         rcInputs[i] = rawChannels[i] - config.rxChannelZeroOffset[i];
       }      
@@ -77,7 +83,7 @@ void rxGetChannels(void)
       
       for (uint8_t i = 0; i < MAX_RC_CHANNELS - 1; i++) 
       {
-        rawChannels[i] = (int16_t)((float)(values[config.channelOrder[i]] - 1500) * 3.14f);
+        rawChannels[i] = (values[config.channelOrder[i]] - 1500) * 3.14f;
         
         rcInputs[i] = rawChannels[i] - config.rxChannelZeroOffset[i];
       }      
@@ -88,8 +94,36 @@ void rxGetChannels(void)
   }
   else if (config.rxMode == CPPM_MODE)
   {
-    // TBD    
+    goodPPMSignal = 0;
+    
+    for (byte i = 1; i <= numberOfPPMChannels; ++i) 
+    {
+      rawChannels[i - 1] = ppm.latestValidChannelValue(config.channelOrder[i - 1] + 1, 0);
+      
+      if (rawChannels[i - 1] > 0)
+      {
+        rawChannels[i - 1] = (rawChannels[i - 1] - 1500) * 2.5f;
+
+        rcInputs[i - 1] = rawChannels[i - 1] - config.rxChannelZeroOffset[i - 1];
+
+        goodPPMSignal++;
+      }
+    }
+
+    if (goodPPMSignal == numberOfPPMChannels)
+    {
+      rcTimeout = 0;
+      overdue = false;
+    }
   }
+
+#if 1
+  for (uint8_t i = 0; i < MAX_RC_CHANNELS; i++)
+  {
+    Serial.print(rcInputs[i]); Serial.print("\t");
+  }
+  Serial.println();
+#endif
 
   // Normally MonopolarThrottle is referenced to the lowest throttle position.
   monopolarThrottle = rawChannels[THROTTLE] - config.rxChannelZeroOffset[THROTTLE]; 
