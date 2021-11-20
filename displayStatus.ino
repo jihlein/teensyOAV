@@ -120,7 +120,7 @@ void displayStatus(void)
     {
       // Create message box
       u8g2.setDrawColor(0);
-      u8g2.drawBox(29, 11, 70, 42);   // Black box
+      u8g2.drawBox(29, 11, 70, 42);    // Black box
       u8g2.setDrawColor(1);
       u8g2.drawFrame(29, 11, 70, 42);  // White Outline
 

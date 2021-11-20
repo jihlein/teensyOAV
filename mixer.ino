@@ -861,7 +861,7 @@ void updateLimits(void)
       // I-term output (throw). Convert from % to actual count
       // A value of 80,000 results in +/- 1250 or full throw at the output stage
       // This is because the maximum signal value is +/-1250 after division by 64. 1250 * 64 = 80,000
-      config.rawILimits[j][i] = temp32 * (int32_t)640;  // 80,000 / 125% = 640
+      config.rawILimits[j][i] = temp32 * (int32_t)640;  // 80,000 / 125 = 640
 
       // I-term source limits. These have to be different due to the I-term gain setting
       // I-term = (gyro * gain) / 32, so the gyro count for a particular gain and limit is
@@ -883,7 +883,7 @@ void updateLimits(void)
     // I-term output (throw). Convert from % to actual count
     // A value of 80,000 results in +/- 1250 or full throw at the output stage
     // This is because the maximum signal value is +/-1250 after division by 64. 1250 * 64 = 80,000
-    config.rawILimits[j][ZED] = temp32 * (int32_t)640;  // 80,000 / 125% = 640
+    config.rawILimits[j][ZED] = temp32 * (int32_t)640;  // 80,000 / 125 = 640
 
     // I-term source limits. These have to be different due to the I-term gain setting
     // I-term = (gyro * gain) / 4, so the gyro count for a particular gain and limit is

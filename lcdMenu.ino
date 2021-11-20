@@ -129,7 +129,6 @@ const char RCMenuItem300[]   PROGMEM = "AccVert filter:";
 // RX mode text
 const char RXMode0[]         PROGMEM = "S-Bus";
 const char RXMode1[]         PROGMEM = "Spektrum";
-const char RXMode2[]         PROGMEM = "CPPM";
 // Channel order
 const char RCMenuItem6[]     PROGMEM = "JR/Spektrum";
 const char RCMenuItem7[]     PROGMEM = "Futaba"; 
@@ -893,13 +892,13 @@ const char* textMenu[] =
     Dummy0,                  // 392 to 395 Spare
     //
     RXMode0,
-    RXMode1,
-    RXMode2,                 // 396 to 398 RX mode
+    RXMode1,                 // 396 to 397 RX mode
     //
     Dummy0,
     Dummy0,
     Dummy0,
-    Dummy0,                  // 399 to 402 Spare
+    Dummy0,
+    Dummy0,                  // 398 to 402 Spare
     //
     Curve_0,
     Curve_1,

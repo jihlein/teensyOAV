@@ -32,7 +32,6 @@
 #include <DSMRX.h>
 #include <MPU6050.h>
 #include <myPWMServo.h>
-#include <PPMReader.h>
 #include <U8g2lib.h>
 #include <Wire.h>
 
@@ -62,11 +61,6 @@ MPU6050 mpu;
 SbusRx sbusRx(&Serial3);
 
 DSM1024 dsm;
-
-byte ppmPin = 15;
-byte numberOfPPMChannels = 6;
-
-PPMReader ppm(ppmPin, numberOfPPMChannels);
 
 myPWMServo output0;
 myPWMServo output1;
@@ -254,7 +248,6 @@ void loop() {
   
   if (frame_10Hz) {
     frame_10Hz = false;
-    //serialDebug10Hz();
   }
   
   if (frame_5Hz) {

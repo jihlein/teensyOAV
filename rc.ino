@@ -92,32 +92,8 @@ void rxGetChannels(void)
       overdue = false;
     }
   }
-  else if (config.rxMode == CPPM_MODE)
-  {
-    goodPPMSignal = 0;
-    
-    for (byte i = 1; i <= numberOfPPMChannels; ++i) 
-    {
-      rawChannels[i - 1] = ppm.latestValidChannelValue(config.channelOrder[i - 1] + 1, 0);
-      
-      if (rawChannels[i - 1] > 0)
-      {
-        rawChannels[i - 1] = (rawChannels[i - 1] - 1500) * 2.5f;
 
-        rcInputs[i - 1] = rawChannels[i - 1] - config.rxChannelZeroOffset[i - 1];
-
-        goodPPMSignal++;
-      }
-    }
-
-    if (goodPPMSignal == numberOfPPMChannels)
-    {
-      rcTimeout = 0;
-      overdue = false;
-    }
-  }
-
-#if 1
+#if 0
   for (uint8_t i = 0; i < MAX_RC_CHANNELS; i++)
   {
     Serial.print(rcInputs[i]); Serial.print("\t");
