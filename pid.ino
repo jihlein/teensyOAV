@@ -70,6 +70,8 @@
 float   gyroSmooth[NUMBEROFAXIS];  // Filtered gyro data
 int32_t pidAvgGyro[NUMBEROFAXIS];  // Averaged gyro data over last x loops
 
+float   integralSum[FLIGHT_MODES][NUMBEROFAXIS];  // Floating point summation of integral error term
+
 float fSample = 0;
 float hpfI    = 0;
 float hpfT    = 0;
@@ -79,8 +81,6 @@ float hpfV    = 0;
 void sensorPID(float period)
 {
   float tempF1    = 0;
-  float tempF2    = 0;
-  float factor    = 0;  // Interval in seconds since the last loop
   float gyroAdcF  = 0;
   int8_t i        = 0;
   int8_t  axis    = 0; 
@@ -188,44 +188,34 @@ void sensorPID(float period)
 
     p1Temp = gyroAdc[axis] + stickP1;
     p2Temp = gyroAdc[axis] + stickP2;
-    
-    // Work out multiplication factor compared to standard loop time
-    factor = period;
-    
-    // Adjust gyro and stick values based on factor   
-    tempF2 = p1Temp;           // Promote int32_t to float
-    tempF2 = tempF2 * factor;
-    p1Temp = (int32_t)tempF2;  // Demote to int32_t
-    
-    tempF2 = p2Temp;
-    tempF2 = tempF2 * factor;
-    p2Temp = (int32_t)tempF2;
 
-    //************************************************************
-    // Increment gyro I-terms
-    //************************************************************
+    // Adjust gyro and stick values based on period
+    // I hate magic numbers, but the 403.14 seems necessary to get
+    // the I term to rise to max value in one second with a gyro
+    // input of 50, per the initial comments in this file.  Not
+    // sure why this is.
+    integralSum[P1][axis] += (float)p1Temp * period * 403.14f;
+    integralSum[P2][axis] += (float)p2Temp * period * 403.14f;
     
-    // Calculate I-term from gyro and stick data 
-    // These may look similar, but they are constrained quite differently.
-    integralGyro[P1][axis] += p1Temp;
-    integralGyro[P2][axis] += p2Temp;
-
     //************************************************************
     // Limit the I-terms to the user-set limits
     //************************************************************
     
     for (i = P1; i <= P2; i++)
     {
-      if (integralGyro[i][axis] > config.rawIConstrain[i][axis])
+      if (integralSum[i][axis] > config.rawIConstrain[i][axis])
       {
-        integralGyro[i][axis] = config.rawIConstrain[i][axis];
+        integralSum[i][axis] = config.rawIConstrain[i][axis];
       }
       
-      if (integralGyro[i][axis] < -config.rawIConstrain[i][axis])
+      if (integralSum[i][axis] < -config.rawIConstrain[i][axis])
       {
-        integralGyro[i][axis] = -config.rawIConstrain[i][axis];
+        integralSum[i][axis] = -config.rawIConstrain[i][axis];
       }
     }
+
+    integralGyro[P1][axis] = integralSum[P1][axis];
+    integralGyro[P2][axis] = integralSum[P2][axis];
 
     //************************************************************
     // Sum gyro readings for P-terms for later averaging
@@ -300,7 +290,6 @@ void sensorPID(float period)
   integralAccelVertF[P1] = integralAccelVertF[P1] * tempF1;  // Decimator. Shrink integrals by user-set amount
   integralAccelVertF[P2] = integralAccelVertF[P2] * tempF1;
 
-  
   //************************************************************
   // Limit the Z-acc I-terms to the user-set limits
   //************************************************************
@@ -407,6 +396,7 @@ void calculatePID(void)
 
     // Gyro I-term
     pidGyroIActual1 = integralGyro[P1][axis] * p1IGain;  // Multiply I-term (Max gain of 127)
+    
     pidGyroIActual1 = pidGyroIActual1 >> 5;              // Divide by 32
 
     // Gyro P-term                                       // Profile P2

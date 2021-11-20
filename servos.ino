@@ -37,7 +37,8 @@ void servoCmds(void)
 {
   int32_t temp;
   uint8_t i = 0;
-/*
+
+#if 0
   Serial.print(servoOut[0]); Serial.print("\t");
   Serial.print(servoOut[1]); Serial.print("\t");
   Serial.print(servoOut[2]); Serial.print("\t");
@@ -45,8 +46,11 @@ void servoCmds(void)
   Serial.print(servoOut[4]); Serial.print("\t");
   Serial.print(servoOut[5]); Serial.print("\t");
   Serial.print(servoOut[6]); Serial.print("\t");
-  Serial.println(servoOut[7]);
-*/  
+  Serial.print(servoOut[7]); Serial.print("\t");
+  Serial.print(servoOut[8]); Serial.print("\t");
+  Serial.println(servoOut[9]);
+#endif
+
   // Re-span numbers from internal values to microseconds and check limits
   for (i = 0; i < MAX_OUTPUTS; i++)
   {
@@ -93,7 +97,8 @@ void servoCmds(void)
       }
     }
   }
-/*
+
+#if 0
   Serial.print(servoCmd[0]); Serial.print("\t");
   Serial.print(servoCmd[1]); Serial.print("\t");
   Serial.print(servoCmd[2]); Serial.print("\t");
@@ -101,8 +106,11 @@ void servoCmds(void)
   Serial.print(servoCmd[4]); Serial.print("\t");
   Serial.print(servoCmd[5]); Serial.print("\t");
   Serial.print(servoCmd[6]); Serial.print("\t");
-  Serial.println(servoCmd[7]); Serial.println();
-*/
+  Serial.print(servoCmd[7]); Serial.print("\t");
+  Serial.print(servoCmd[8]); Serial.print("\t");
+  Serial.println(servoCmd[9]);
+#endif
+
 }
 
 void setupServos(void)

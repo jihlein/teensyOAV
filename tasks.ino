@@ -320,10 +320,3 @@ void menuMethods(void) {
       break;
   }
 }
-
-void serialDebug10Hz(void) {
-  Serial.print(config.channel[0].p1Value);  Serial.print("  ");
-  Serial.print(config.channel[1].p1Value);  Serial.print("  ");
-  Serial.print(config.channel[2].p1Value);  Serial.print("  ");
-  Serial.println(config.channel[3].p1Value);
-}

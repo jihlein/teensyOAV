@@ -64,7 +64,7 @@ const menuRange_t rcMenuRanges[2][RCITEMSOFFSET] PROGMEM =
 {
   {
     // RC setup (12)                // Min, Max, Increment, Style, Default
-    {SBUS, CPPM_MODE, 1 ,1, SBUS},  // Receiver type (SBUS to CPPM)  
+    {SBUS, SPEKTRUM, 1 ,1, SBUS},   // Receiver type (SBUS to CPPM)  
     {JRSEQ, CUSTOM, 1, 1, JRSEQ},   // Channel order
     {GEAR ,AUX3, 1, 1, GEAR},       // Profile select channel
     {0, 40, 1, 0, 0},               // Outbound TransitionSpeed 0 to 40

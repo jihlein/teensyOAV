@@ -75,10 +75,6 @@ void init(void)
   {
     Serial3.begin(115000);
   }
-  else if (config.rxMode == CPPM_MODE)
-  {
-    // TBD
-  }
 
   //***********************************************************
   // LCD initialization
@@ -109,6 +105,8 @@ void init(void)
     output5.attach( 6, ANALOGFREQ,  ANALOGMIN,  ANALOGMAX);
     output6.attach( 7, ANALOGFREQ,  ANALOGMIN,  ANALOGMAX);
     output7.attach(14, ANALOGFREQ,  ANALOGMIN,  ANALOGMAX);
+    output8.attach(24, ANALOGFREQ,  ANALOGMIN,  ANALOGMAX);
+    output9.attach(28, ANALOGFREQ,  ANALOGMIN,  ANALOGMAX);
   
     // For each output
     for (i = 0; i < MAX_OUTPUTS; i++)
@@ -136,6 +134,8 @@ void init(void)
       output5.write(servoCmd[5]);
       output6.write(servoCmd[6]);
       output7.write(servoCmd[7]);
+      output8.write(servoCmd[8]);
+      output9.write(servoCmd[9]);
 
       // Loop rate = 20ms (50Hz)
       delay(20);      
@@ -164,6 +164,8 @@ void init(void)
       output5.write(servoCmd[5]);
       output6.write(servoCmd[6]);
       output7.write(servoCmd[7]);
+      output8.write(servoCmd[8]);
+      output9.write(servoCmd[9]);
 
       // Loop rate = 20ms (50Hz)
       delay(20);      

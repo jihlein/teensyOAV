@@ -137,12 +137,6 @@ void menuServoSetup(uint8_t section)
         valuePtr[menuTemp - SERVOSTART] = 0;
       }
 
-      // Do not allow servo enable for throttle if in CPPM mode
-      if ((config.channel[menuTemp - SERVOSTART].p1SourceA == THROTTLE) && (config.rxMode == CPPM_MODE))
-      {
-        servoEnable = false;
-      }
-
       doMenuItem(menuTemp, valuePtr + (menuTemp - SERVOSTART), 1, range, 0, textLink, servoEnable, (menuTemp - SERVOSTART));
     }
 
@@ -151,7 +145,7 @@ void menuServoSetup(uint8_t section)
 
     if (button == ENTER)
     {
-      updateLimits();       // Update actual servo trims
+      updateLimits();        // Update actual servo trims
       saveConfigToEEPROM();  // Save value and return
       waitButton4();         // Wait for user's finger off the button
     }
