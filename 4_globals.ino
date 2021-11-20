@@ -73,8 +73,8 @@ uint16_t subTop   = 0;
 //************************************************************
 
 float   gyroAvgNoise = 0.0;
-float   integralAccelVertF[FLIGHT_MODES];          // Integrated Acc Zint32_t integralGyro[FLIGHT_MODES][NUMBEROFAXIS];  // PID I-terms (gyro) for each axis
-int32_t integralGyro[FLIGHT_MODES][NUMBEROFAXIS];  // PID I-terms (gyro) for each axis
+float   integralAccelVertF[FLIGHT_MODES];          // Integrated Acc Z
+float   integralGyro[FLIGHT_MODES][NUMBEROFAXIS];  // PID I-terms (gyro) for each axis
 int16_t pidGyros[FLIGHT_MODES][NUMBEROFAXIS];
 int16_t pidAccels[FLIGHT_MODES][NUMBEROFAXIS];
 

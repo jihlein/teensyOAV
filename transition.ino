@@ -304,14 +304,14 @@ void profileTransition(void)
   if ((transitionState == TRANS_P1) || (transition == config.transitionP1))
   {
     // Clear P2 I-term while fully in P1
-    memset(&integralGyro[P2][ROLL], 0, sizeof(int32_t) * NUMBEROFAXIS);
-    integralAccelVertF[P2] = 0.0;
+    memset(&integralGyro[P2][ROLL], 0, sizeof(float) * NUMBEROFAXIS);
+	integralAccelVertF[P2] = 0.0;
   }
   else if ((transitionState == TRANS_P2) || (transition == config.transitionP2))
   {
     // Clear P1 I-term while fully in P2
-    memset(&integralGyro[P1][ROLL], 0, sizeof(int32_t) * NUMBEROFAXIS);
-    integralAccelVertF[P1] = 0.0;
+    memset(&integralGyro[P1][ROLL], 0, sizeof(float) * NUMBEROFAXIS);
+	integralAccelVertF[P1] = 0.0;
   }
 
   //**********************************************************************
