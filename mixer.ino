@@ -739,7 +739,7 @@ void processMixer(void)
     } // No throttle
 
     // No throttles, so clamp to THROTTLEMIN if flagged as a motor
-    else if (config.channel[i].motorMarker == MOTOR)
+    else if (config.channel[i].motorMarker == MOTORPWM  || config.channel[i].motorMarker == ONESHOT)
     {
       config.channel[i].p1Value = -THROTTLEOFFSET;  // 3750-1250 = 2500 = 1.0ms. THROTTLEOFFSET = 1250
     }

@@ -112,7 +112,7 @@ void init(void)
     for (i = 0; i < MAX_OUTPUTS; i++)
     {
       // Check for motor marker
-      if (config.channel[i].motorMarker == MOTOR)
+      if (config.channel[i].motorMarker == MOTORPWM || config.channel[i].motorMarker == ONESHOT)
       {
         // Set output to maximum pulse width
         servoCmd[i] = MOTOR_100;
@@ -146,7 +146,7 @@ void init(void)
     for (i = 0; i < MAX_OUTPUTS; i++)
     {
       // Check for motor marker
-      if (config.channel[i].motorMarker == MOTOR)
+      if (config.channel[i].motorMarker == MOTORPWM || config.channel[i].motorMarker == ONESHOT)
       {
         // Set output to minimum pulse width
         servoCmd[i] = MOTOR_0;

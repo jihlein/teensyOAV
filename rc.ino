@@ -39,8 +39,6 @@
 // * Variables
 // ************************************************************
 
-byte goodPPMSignal = 0;
-
 //************************************************************
 // Code
 //************************************************************
@@ -57,11 +55,14 @@ void rxGetChannels(void)
     {
       for (uint8_t i = 0; i < MAX_RC_CHANNELS; i++) 
       {
+#if defined FRSKYSBUS
+        rawChannels[i] = (sbusRx.ch()[config.channelOrder[i]] - 1024) * 1.22f;
+#else
         rawChannels[i] = (sbusRx.rx_channels()[config.channelOrder[i]] - 1024) * 1.22f;
-        
+#endif
         rcInputs[i] = rawChannels[i] - config.rxChannelZeroOffset[i];
       }      
-    
+
       if (!sbusRx.failsafe() && !sbusRx.lost_frame())
       {
         rcTimeout = 0;

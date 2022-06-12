@@ -211,6 +211,7 @@ const char MixerItem420[]    PROGMEM = "Alt. damp";
 const char MixerItem40[]     PROGMEM = "A.Servo";
 const char MixerItem41[]     PROGMEM = "D.Servo";
 const char MixerItem49[]     PROGMEM = "Motor";
+const char MixerItem50[]     PROGMEM = "OneShot";
 const char MixerItem60[]     PROGMEM = "Linear";
 const char MixerItem61[]     PROGMEM = "Sine";
 const char MixerItem62[]     PROGMEM = "SqrtSine";
@@ -684,12 +685,12 @@ const char* textMenu[] =
     //
     Dummy0,
     Dummy0,
-    Dummy0,
-    Dummy0,                  // 222 to 225 Spare
+    Dummy0,                  // 222 to 224 Spare
     //
     MixerItem40,
     MixerItem41,
-    MixerItem49,             // 226 to 228 Output types 
+    MixerItem49,
+    MixerItem50,             // 225 to 228 Output types 
     //
     Misc_Msg01,              // 229 AccVert
     //

@@ -103,6 +103,10 @@ int16_t gyroAdcAlt[NUMBEROFAXIS];  // Holds Gyro data - always in RPY order (Com
 // Shared servo globals
 //************************************************************
 
+#define MOTORPWMFREQ 250
+#define MOTORPWMMIN  900
+#define MOTORPWMMAX 2100
+  
 #define ONESHOTFREQ  500
 #define ONESHOTMIN   124
 #define ONESHOTMAX   252

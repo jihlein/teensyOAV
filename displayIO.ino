@@ -67,7 +67,7 @@ void displayInOut(void)
         temp = servoOut[i];  // Promote to 16 bits
 
         // Check for motor marker and ignore if set
-        if (config.channel[i].motorMarker != MOTOR)
+        if (config.channel[i].motorMarker != MOTORPWM && config.channel[i].motorMarker != ONESHOT)
         {
           // Scale servo from 2500~5000 to 875~2125
           temp = ((temp - 3750) >> 1) + SERVO_CENTER; // SERVO_CENTER = 1500
@@ -109,7 +109,7 @@ void displayInOut(void)
         for (i = 0; i < MAX_OUTPUTS; i++)
         {
           // Check for motor marker
-          if (config.channel[i].motorMarker == MOTOR)
+          if (config.channel[i].motorMarker == MOTORPWM || config.channel[i].motorMarker == ONESHOT)
           {
             // Set output to minimum pulse width (1000us)
             servoOut[i] = MOTORMIN;

@@ -44,7 +44,7 @@
    
 const uint16_t mixerMenuTextE[MIXERITEMS] PROGMEM =
 {
-  226,0,0,56,                           // Motor control and offsets (4)
+  225,0,0,56,                           // Motor control and offsets (4)
   0,0,0,0,0,0,                          // Flight controls (6)
   68,68,68,68,68,68,68,68,68,68,68,68,  // Mixer ranges (12)
   421,0,421,0,421,0,421,0               // Other sources (8)
@@ -52,7 +52,7 @@ const uint16_t mixerMenuTextE[MIXERITEMS] PROGMEM =
 
 const uint16_t mixerMenuTextM[MIXERITEMS] PROGMEM =
 {
-  226,0,0,56,                           // Motor control and offsets (4)
+  225,0,0,56,                           // Motor control and offsets (4)
   0,0,0,0,0,0,                          // Flight controls (6)
   68,68,68,68,68,68,68,68,68,68,68,68,  // Mixer ranges (12)
   442,0,421,0,442,0,421,0               // Other sources (8)
@@ -69,7 +69,7 @@ const uint16_t mixerMenuOffsets[MIXERITEMS] PROGMEM =
 const menuRange_t mixerMenuRanges[MIXERITEMS] PROGMEM = 
 {
     // Motor control and offsets (4)
-    {ASERVO,MOTOR,1,1,MOTOR},      // Motor marker (0)
+    {ASERVO,ONESHOT,1,1,ASERVO},   // Motor marker (0)
     {0,125,1,0,100},               // P1 throttle volume 
     {0,125,1,0,100},               // P2 throttle volume
     {LINEAR,SQRTSINE,1,1,LINEAR},  // Throttle curves

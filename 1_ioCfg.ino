@@ -66,7 +66,7 @@
 enum availability  {OFF = 0, ON, SCALE, REVERSE, REVERSESCALE};
 enum curve         {LINEAR = 0, SINE, SQRTSINE};
 enum curves        {P1_THR_CURVE = 0, P2_THR_CURVE, P1_COLL_CURVE, P2_COLL_CURVE, GEN_CURVE_C, GEN_CURVE_D};
-enum devices       {ASERVO = 0, DSERVO, MOTOR}; 
+enum devices       {ASERVO = 0, DSERVO, MOTORPWM, ONESHOT}; 
 enum filters       {HZ5 = 0, HZ10, HZ21, HZ44, HZ94, HZ184, HZ260, NOFILTER};
 enum flightFlags   {RXACTIVITY = 0, ARM_BLOCKER};
 enum frames        {BASIC = 0, EDIT, ABORT, LOG, CURVE, OFFSET};

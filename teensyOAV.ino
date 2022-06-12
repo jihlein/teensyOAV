@@ -45,11 +45,18 @@
 // for the 2p0p0 include.  Do the opposite when using Futaba.  Not a good long term
 // solution, but....
 
-// Uncomment for FrSky
-#include <sbus2p1p2.h>
+// Uncomment for FrSky sBus, comment for Futaba (Hopefully temporary)
+#define FRSKYSBUS
 
-// Uncomment for Futaba
-// #include <sbus2p0p0.h>
+#if defined FRSKYSBUS
+  #include <sbus.h>
+  bfs::SbusRx sbusRx(&Serial3);
+#else
+  #include <sbus2p0p0.h>
+  SbusRx sbusRx(&Serial3);
+#endif
+
+DSM1024 dsm;
 
 // Uncomment only one of the following OLED dislay drivers:
 // SPI Drivers:
@@ -57,10 +64,6 @@
 U8G2_SSD1306_128X64_NONAME_F_4W_SW_SPI u8g2(U8G2_R0, /* clock=*/ 13, /* data=*/ 11, /* cs=*/ 10, /* dc=*/ 9, /* reset=*/ 8);
 
 MPU6050 mpu;
-
-SbusRx sbusRx(&Serial3);
-
-DSM1024 dsm;
 
 myPWMServo output0;
 myPWMServo output1;

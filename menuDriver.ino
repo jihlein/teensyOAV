@@ -391,7 +391,7 @@ void doMenuItem(uint16_t menuItem, int8_t *values, uint8_t mult, menuRange_t ran
 
     // Set servo position if required
     // Ignore if the output is marked as a motor
-    if  ((servoEnable) && (config.channel[servoNumber].motorMarker != MOTOR))
+    if  ((servoEnable) && (config.channel[servoNumber].motorMarker != MOTORPWM && config.channel[servoNumber].motorMarker != ONESHOT))
     {
       servoUpdate = 0;
 
