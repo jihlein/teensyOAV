@@ -33,7 +33,7 @@
 // * Defines
 // ************************************************************
 
-#define NOISE_THRESH 10  // Max RX noise threshold
+#define NOISE_THRESH 50  // Max RX noise threshold
 
 // ************************************************************
 // * Variables
