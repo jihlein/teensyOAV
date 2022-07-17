@@ -1049,10 +1049,10 @@ uint8_t pollButtons(bool acceleration)
 
   while (button == NONE)          
   {
-    buttons = (pinb & 0xf0);  
+    buttons = (pinb & 0xF0);  
     delay(5);
 
-    if (buttons != (pinb & 0xf0))
+    if (buttons != (pinb & 0xF0))
     {
       buttons = 0; // Buttons different
     }
