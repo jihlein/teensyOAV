@@ -113,7 +113,7 @@ void menuRcSetup(uint8_t section)
   menuRange_t range;
   uint16_t    textLink;
   uint16_t    offset = 0;
-  uint16_t    items;
+  uint16_t    items  = 10;
   
   // If submenu item has changed, reset submenu positions
   if (menuFlag)

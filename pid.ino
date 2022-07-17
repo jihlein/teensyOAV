@@ -95,7 +95,15 @@ void sensorPID(float period)
   // When combining with the gyro signals, the sticks have to be in the opposite polarity as the gyros.
   // As described above, pitch and yaw are already opposed, but roll needs to be reversed.
 
-  int16_t rcInputsAxis[NUMBEROFAXIS] = {-rcInputs[AILERON], rcInputs[ELEVATOR], rcInputs[RUDDER]};
+  // int16_t rcInputsAxis[NUMBEROFAXIS] = {-rcInputs[AILERON], rcInputs[ELEVATOR], rcInputs[RUDDER]};
+  
+  // The below 4 lines clean up a compiler warning from the above commented out line.
+  
+  int16_t rcInputsAxis[NUMBEROFAXIS];
+  
+  rcInputsAxis[ROLL]  = -rcInputs[AILERON];
+  rcInputsAxis[PITCH] =  rcInputs[ELEVATOR];
+  rcInputsAxis[YAW]   =  rcInputs[RUDDER];  
   
   int8_t stickRates[FLIGHT_MODES][NUMBEROFAXIS] =
   {

@@ -675,7 +675,7 @@ void processMixer(void)
           if (step1 < 0)
           {
             // Multiply SIN[100 - transition] steps (0 to 100)
-            temp3 = 100 - (int8_t)pgm_read_byte(&sin[100 - (int8_t)transition]);
+            temp3 = 100 - (int8_t)pgm_read_byte(&SIN[100 - (int8_t)transition]);
           }
           // If P2 greater than P1, SINE is the one we want
           else
