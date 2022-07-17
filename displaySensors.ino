@@ -40,27 +40,14 @@ void displaySensors(void)
   // While BACK not pressed
   while(digitalRead(BUTTON1) != 0)
   {
-    if (frame_100Hz) {
-      frame_100Hz = false;
-      updateTransition();  // Update the transition variable
-    }
-    
-    if (frame_500Hz) {
-      frame_500Hz = false;// Read accels
-      // Get the i2c data from the MPU6050
+    if (frame_20Hz) {
+      frame_20Hz = false;
+
       mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
       readGyros();
       readAccels();
+      imuUpdate(0.05f);
 
-      // Refresh accSmooth values and AccVert
-      imuUpdate(0.02f);
-
-      // Update I-terms, average gyro values each loop
-      sensorPID(0.02f);
-    }
-    
-    if (frame_20Hz) {
-      frame_20Hz = false;
       u8g2.clearBuffer();
   
       lcdDisplayText(26,  37, 0);  // Gyro
