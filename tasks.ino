@@ -84,8 +84,7 @@ void tasks50Hz(void)
   //************************************************************
 
   // All cases - reset arm timer
-  if (config.armMode == ARMABLE)
-  {
+  if (config.armMode == ARMABLE) {
     // Manual arm/disarm
     // If sticks not at extremes, reset manual arm/disarm timer
     // Sticks down and inside = armed. Down and outside = disarmed
@@ -139,47 +138,12 @@ void tasks50Hz(void)
         {
           menuMode = IDLE;  
         }
-
-#ifdef ERROR_LOG
-add_log(MANUAL);
-#endif      
-
-      }
-
-      // Automatic disarm
-      // Reset auto-disarm count if any RX activity or set to zero
-      if ((flightFlags & (1 << RXACTIVITY)) || (config.disarmTimer == 0))
-      {
-        disarmTimer = 0;
-        disarmSeconds = 0;
-      }
-    
-      // Increment disarm timer (seconds) if armed
-      if (disarmTimer > SECOND_TIMER)
-      {
-        disarmSeconds++;
-        disarmTimer = 0;
-      }
-
-      // Auto-disarm model if timeout enabled and due
-      // Don't allow disarms less than 30 seconds. That's just silly...
-      if ((disarmSeconds >= config.disarmTimer) && (config.disarmTimer >= 30))
-      {
-        // Disarm the FC
-        generalError |= (1 << DISARMED);  // Set flags to disarmed
-        LED_OFF;                          // Signal that FC is now disarmed
-
-#ifdef ERROR_LOG
-add_log(TIMER);
-#endif
-
       }
     }
   } // if (Config.ArmMode == ARMABLE)
     
   // Arm when Armed mode is selected
-  else if (config.armMode == ARMED)
-  {
+  else if (config.armMode == ARMED) {
     // If disarmed, arm
     if (generalError & (1 << DISARMED))
     {
@@ -189,11 +153,13 @@ add_log(TIMER);
     LED_ON;
   }
   // Handle cases where RC arming has been selected
-  else
-  {
+  else {
     // Check for rising edge of RC input delegated to be the arming input
     if ((rcInputs[config.armChannel] > 500) && (oldArmChannel <= 500))
     {
+      disarmTimer = 0;
+	  disarmSeconds = 0;
+		
       // If disarmed and throttle below minimum, arm
       if ((generalError & (1 << DISARMED)) && (monopolarThrottle < THROTTLEIDLE))
       {
@@ -208,6 +174,31 @@ add_log(TIMER);
       }
 	}
 	oldArmChannel = rcInputs[config.armChannel];
+  }
+
+  if ((config.armMode != ARMED) && ((generalError & (1 << DISARMED)) == 0)) {
+    // Automatic disarm
+    // Reset auto-disarm count if any RX activity or set to zero
+    if ((flightFlags & (1 << RXACTIVITY)) || (config.disarmTimer == 0)) {
+      disarmTimer = 0;
+      disarmSeconds = 0;
+    }
+    
+    // Increment disarm timer (seconds) if armed
+    if (disarmTimer > SECOND_TIMER) {
+      disarmSeconds++;
+      disarmTimer = 0;
+    }
+
+    // Auto-disarm model if timeout enabled and due
+    // Don't allow disarms less than 30 seconds. That's just silly...
+    if ((disarmSeconds >= config.disarmTimer) && (config.disarmTimer >= 30)) {
+      // Disarm the FC
+      generalError |= (1 << DISARMED);  // Set flags to disarmed
+      LED_OFF;                          // Signal that FC is now disarmed
+	  disarmTimer = 0;
+	  disarmSeconds = 0;
+    } 
   }
 }
 
