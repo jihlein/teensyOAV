@@ -34,7 +34,6 @@
 //***********************************************************
 
 #include "servos.h"
-#include "typedefs.h"
 
 // ************************************************************
 // *Code
@@ -67,6 +66,7 @@ void displayInOut(void)
       sensorPID(0.04f);
       calculatePID();      // Calculate PID values
       updateTransition();  // Update the transition variable
+	  fpTransition();      // Run the transition timer
       processMixer();      // Do all the mixer tasks - can be very slow
       updateServos();      // Transfer Config.Channel[i].value data to 
                            // ServoOut[i] and check servo limits. 
