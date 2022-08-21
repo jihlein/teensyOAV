@@ -33,6 +33,9 @@
 // * Code
 // ************************************************************
 
+volatile uint16_t servoOut[MAX_OUTPUTS];
+volatile uint16_t servoCmd[MAX_OUTPUTS];
+
 void servoCmds(void)
 {
   int32_t temp;

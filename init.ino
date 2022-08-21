@@ -29,13 +29,24 @@
 // *
 // **************************************************************************
 
+//***********************************************************
+//* Includes
+//***********************************************************
+
+#include "servos.h"
+
 // ************************************************************
 // * Code
 // ************************************************************
 
+CONFIG_STRUCT config;  // eeProm data configuration
+
+uint16_t systemVoltage = 0;  // Initial voltage measured
+
 void init(void)
 {
   uint8_t i;
+  bool    updated;
   
   //***********************************************************
   // Start up
@@ -260,8 +271,11 @@ void init(void)
   
   updateLimits();  // Update travel and trigger limits
 
+  // Set NO_SIGNAL bit
+  generalError |= (1 << NO_SIGNAL);
+  
   // Disarm on start-up if Armed setting is ARMABLE
-  if (config.armMode == ARMABLE)
+  if (config.armMode != ARMED)
   {
     generalError |= (1 << DISARMED);  // Set disarmed bit
   }

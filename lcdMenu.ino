@@ -725,7 +725,7 @@ const char* textMenu[] =
     MixerItem40,
     MixerItem41,
     MixerItem49,             // 254 to 256 Device types
-    //	
+    //
     Dummy0,
     Dummy0,                  // 257 to 258 Spare
     //

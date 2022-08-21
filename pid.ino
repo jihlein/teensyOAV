@@ -67,8 +67,15 @@
 //************************************************************
 
 // PID globals for each [Profile] and [axis]
-float   gyroSmooth[NUMBEROFAXIS];  // Filtered gyro data
-int32_t pidAvgGyro[NUMBEROFAXIS];  // Averaged gyro data over last x loops
+float   gyroSmooth[NUMBEROFAXIS];                  // Filtered gyro data
+float   integralAccelVertF[FLIGHT_MODES];          // Integrated Acc Z
+
+int16_t pidAccels[FLIGHT_MODES][NUMBEROFAXIS];
+int16_t pidGyros[FLIGHT_MODES][NUMBEROFAXIS];
+int32_t integralGyro[FLIGHT_MODES][NUMBEROFAXIS];  // PID I-terms (gyro) for each axis
+int32_t pidAvgGyro[NUMBEROFAXIS];                  // Averaged gyro data over last x loops
+
+float   gyroAvgNoise;
 
 float fSample = 0;
 float hpfI    = 0;

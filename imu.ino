@@ -58,9 +58,13 @@ float vectorY = 0;
 float vectorZ = 1;
 
 float accelAnglePitch, accelAngleRoll, eulerAngleRoll, eulerAnglePitch;
+float accelSmooth[NUMBEROFAXIS];           // Filtered accel data
 float gyroPitchVC, gyroRollVC, gyroYawVC;
+float intervalF;
 float vectorA, vectorB;
 float vectorNewA, vectorNewB;
+
+int16_t angle[2];                 // Attitude in degrees - pitch and roll
 
 // Software LPF conversion table      5Hz,  10Hz, 21Hz, 44Hz, 94Hz, 184Hz, 260Hz, None  
 const float lpfLookup[8] PROGMEM = {16.43,  8.27, 4.18, 2.22, 1.30,  1.00,  1.00, 1.00};  // 500 Hz

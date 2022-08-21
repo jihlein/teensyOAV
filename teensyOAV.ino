@@ -29,11 +29,21 @@
 // *
 // **************************************************************************
 
+//***********************************************************
+//* Includes
+//***********************************************************
+
 #include <DSMRX.h>
 #include <MPU6050.h>
 #include <myPWMServo.h>
 #include <U8g2lib.h>
 #include <Wire.h>
+
+#include "accels.h"
+#include "gyros.h"
+#include "ioCfg.h"
+#include "pid.h"
+#include "rc.h"
 
 // At the moment, there are some questions/issues revolving around the Arduino sBus
 // library versions.  Version 2.1.2, the lastest, runs fine with FrSky sBus, but does
@@ -76,79 +86,83 @@ myPWMServo output7;
 myPWMServo output8;
 myPWMServo output9;
 
-// HEARTBEAT_LED
-#define HEARTBEAT_LED 3
+//***********************************************************
+//* Defines
+//***********************************************************
 
-// LED Heartbeat Variables
-uint8_t ledState = LOW;
-
-// Executive Timing Variables
-IntervalTimer execTimer;
-
-#define FRAME_COUNT 1000
-#define COUNT_500HZ 2
-#define COUNT_250HZ 4
-#define COUNT_100HZ 10
-#define COUNT_50HZ  20
-#define COUNT_20HZ  50
-#define COUNT_10HZ  100
-#define COUNT_5HZ   200
-#define COUNT_1HZ   1000
-
-#define RC_OVERDUE  750  // Number of 1 mSec ticks before RC will be overdue = 750 mSec
-
-uint16_t frameCounter = 0;
-uint8_t frame_500Hz   = false;
-uint8_t frame_250Hz   = false;
-uint8_t frame_100Hz   = false;
-uint8_t frame_50Hz    = false;
-uint8_t frame_20Hz    = false;
-uint8_t frame_10Hz    = false;
-uint8_t frame_5Hz     = false;
-uint8_t frame_1Hz     = false;
-
-uint16_t armTimer          = 0;
-uint16_t disarmTimer       = 0;
-uint16_t gyroTimeout       = 0;
-uint16_t rcTimeout         = RC_OVERDUE;
-uint16_t statusSeconds     = 0;
-uint16_t transitionTimeout = 0;
-uint16_t updateStatusTimer = 0;
-
-// Button Pins
-#define BUTTON1 20
-#define BUTTON2 21
-#define BUTTON3 22
-#define BUTTON4 23
-
-uint8_t pinb = 0xFF;
+#define ARM_TIMER          1000  // Amount of time the sticks must be held to trigger arm. Currently one second.
+#define ARM_TIMER_RESET_1  960   // RC position to reset timer for aileron, elevator and rudder
+#define ARM_TIMER_RESET_2  50    // RC position to reset timer for throttle
+#define DISARM_TIMER       3000  // Amount of time the sticks must be held to trigger disarm. Currently three seconds.
+#define RC_OVERDUE         50    // Number of 1 mSec ticks before RC will be overdue = 50 mSec
+#define SECOND_TIMER       1000  // Unit of timing for seconds
 
 //***********************************************************
 //* Code and Data variables
 //***********************************************************
 
 // Flight variables
+int16_t oldTransition = 0;
+uint8_t oldTransitionState = TRANS_P1;
 int16_t transition = 0;
 int16_t transitionCounter = 0;
+uint8_t transitionState = TRANS_P1;
 
 // Flags
+volatile uint8_t alarmFlags   = 0;
 volatile uint8_t flightFlags  = 0;
 volatile uint8_t generalError = 0;
-volatile uint8_t alarmFlags   = 0;
+volatile bool    transitionUpdated = false;
 
 // Global Buffers
 #define PBUFFER_SIZE 25
 char pBuffer[PBUFFER_SIZE];      // Print buffer (25 bytes)
 
-// Misc structures
-typedef struct
+// Locals
+uint8_t  disarmSeconds = 0;
+uint8_t  menuMode      = STATUS_TIMEOUT;
+uint8_t  oldAlarms     = 0;
+uint16_t oldArmChannel = 0;
+int8_t   oldFlight = 3;     // Old flight profile
+int8_t   oldTransMode = 0;  // Old transition mode
+uint8_t  statusSeconds = 0;
+uint8_t  transitionDirection = P2;
+uint16_t transitionTime = 0;
+
+// Transition matrix
+// Usage: Transition_state = Trans_Matrix[config.FlightSel][old_flight]
+// config.FlightSel is where you've been asked to go, and old_flight is where you were.
+// Transition_state is where you end up :)
+const int8_t transMatrix[3][3] PROGMEM =
 {
-  int8_t  lower;         // Lower limit for menu item
-  int8_t  upper;         // Upper limit for menu item
-  uint8_t increment;     // Increment for menu item
-  uint8_t style;         // 0 = numeral, 1 = text
-  int8_t  defaultValue;  // Default value for this item
-} menuRange_t; 
+  {TRANSITIONING,         TRANS_P1N_TO_P1_START, TRANS_P2_TO_P1_START},
+  {TRANS_P1_TO_P1N_START, TRANSITIONING,         TRANS_P2_TO_P1N_START},
+  {TRANS_P1_TO_P2_START,  TRANS_P1N_TO_P2_START, TRANSITIONING}
+};
+
+// Misc Globals
+volatile uint8_t loopCount;
+volatile bool    overdue = true;
+volatile uint8_t pinb    = 0xFF;
+
+// Timing Variables
+uint16_t armTimer          = 0;
+uint16_t disarmTimer       = 0;
+uint16_t gyroTimeout       = 0;
+uint16_t rcTimeout         = RC_OVERDUE;
+uint16_t statusTimeout     = SECOND_TIMER;
+uint16_t systemTick        = 1;
+uint16_t transitionTimeout = 0;
+uint16_t updateStatusTimer = 0;
+
+IntervalTimer execTimer;
+
+bool run500Hz;
+bool run250Hz;
+bool run50Hz;
+bool run25Hz;
+
+uint8_t heartbeatLedState = LOW;
 
 //************************************************************
 //* Setup
@@ -169,45 +183,30 @@ void setup() {
 //************************************************************
 
 void execCount(void) {
-  frameCounter++;
-  if (frameCounter > FRAME_COUNT)
-    frameCounter = 1;
-
-  if ((frameCounter % COUNT_500HZ) == 0)
-    frame_500Hz = true;
-
-  if ((frameCounter % COUNT_250HZ) == 0)
-    frame_250Hz = true;
-    
-  if ((frameCounter % COUNT_100HZ) == 0)
-  {
-    frame_100Hz = true;
-    rxGetChannels();
-  }
-    
-  if ((frameCounter % COUNT_50HZ) == 0)
-    frame_50Hz = true;
-
-  if ((frameCounter % COUNT_20HZ) == 0)
-    frame_20Hz = true;
-    
-  if ((frameCounter % COUNT_10HZ) == 0)
-    frame_10Hz = true;
-    
-  if ((frameCounter % COUNT_5HZ) == 0)
-    frame_5Hz = true;
-
-  if ((frameCounter % COUNT_1HZ) == 0)
-    frame_1Hz = true;
-
   armTimer++;
   disarmTimer++;
   gyroTimeout++;
   rcTimeout++;
-  statusSeconds++;
+  statusTimeout++;
+  systemTick++;
   transitionTimeout++;
   updateStatusTimer++;
   
+  if (systemTick > 1000)
+    systemTick = 1;
+
+  if ((systemTick % 2) == 0)
+    run500Hz = true;
+
+  if ((systemTick % 4) == 0)
+    run250Hz = true;
+
+  if ((systemTick % 20) == 0)
+    run50Hz = true;
+
+  if ((systemTick % 40) == 0)
+    run25Hz = true;
+
   pinb = digitalRead(BUTTON1) << 7 |
          digitalRead(BUTTON2) << 6 |
          digitalRead(BUTTON3) << 5 |
@@ -218,55 +217,668 @@ void execCount(void) {
 //* Main loop
 //************************************************************
 
-void loop() {
-  if (frame_250Hz) {
-    menuMethods();
-    rxGetChannels();
-  }
+void loop() 
+{
+  // Increment the loop counter
+  loopCount++;
+    
+  //************************************************************
+  //* Once per second events
+  //* - Increment Status_seconds
+  //* - Blink Heartbeat LED
+  //* - Check the battery voltage
+  //************************************************************
+
+  // Count elapsed seconds
+  if (statusTimeout > SECOND_TIMER)
+  {
+    statusSeconds++;
+    statusTimeout = 0;
   
-  if (frame_500Hz) {
-    frame_500Hz = false;
-    tasks500Hz();  
+    // Blink Heartbeat LED
+    if (heartbeatLedState == LOW)
+      heartbeatLedState = HIGH;
+    else
+      heartbeatLedState = LOW;
+  
+    digitalWrite(HEARTBEAT_LED, heartbeatLedState);
+      
+    // Check if Vbat lower that trigger
+    if (0)  // HJI Complete this
+      generalError |= (1 << LVA_ALARM);   // Set LVA_Alarm flag
+    else
+      generalError &= ~(1 << LVA_ALARM);  // Clear LVA_Alarm flag
+  }
+
+  //************************************************************
+  //* State machine for switching between screens safely
+  //* In the state machine, once a state changes, the new state 
+  //* will be processed in the next loop.
+  //************************************************************
+
+  switch (menuMode)
+  {
+    // In IDLE mode, the text "Press for status" is displayed ONCE.
+    // If a button is pressed the mode changes to PRESTATUS, where
+    // it will wait for the right time to proceed.
+    case IDLE:
+      // If any button is pressed
+      if ((pinb & 0xF0) != 0xF0)
+      {
+        menuMode = PRESTATUS;
+        // Reset the status screen timeout
+        statusSeconds = 0;
+      }
+      break;
+
+    // Waiting to safely enter Status screen
+    case PRESTATUS:
+      // Ready to move on
+      menuMode = STATUS;
+      break;
+
+    // Status screen first display
+    case STATUS:
+      // Reset the status screen period
+      updateStatusTimer = 0;
+
+      // Update status screen
+      displayStatus();
+
+      // Wait for timeout
+      menuMode = WAITING_TIMEOUT_BD;
+      break;
+
+    // Status screen up, but button still down
+    // This is designed to stop the menu appearing instead of the status screen
+    // as it will stay in this state until the button is released
+    case WAITING_TIMEOUT_BD:
+      if (digitalRead(BUTTON1) == 0)
+        menuMode = WAITING_TIMEOUT_BD;
+      else
+        menuMode = WAITING_TIMEOUT;
+      break;
+
+    // Status screen up, waiting for timeout or action
+    // but button is back up
+    case WAITING_TIMEOUT:
+      // In status screen, change back to idle after timing out
+      // If in vibration test mode, stay in Status
+      if ((statusSeconds >= 10) && (config.vibration == OFF))
+        menuMode = PRESTATUS_TIMEOUT;
+      // Jump to menu if button pressed
+      else if (digitalRead(BUTTON1) == 0)
+        menuMode = MENU;
+      // Update status screen four times/sec while waiting to time out
+      else if (updateStatusTimer > (SECOND_TIMER >> 2))
+        menuMode = PRESTATUS;
+      else
+        // Unblock motors if blocked
+        flightFlags &= ~(1 << ARM_BLOCKER);
+      break;
+
+    // Attempting to leave Status gracefully
+    case PRESTATUS_TIMEOUT:
+      menuMode = STATUS_TIMEOUT;
+      break;
+
+    // In STATUS_TIMEOUT mode, the idle screen is displayed and the mode 
+    // changed to POSTSTATUS_TIMEOUT. 
+    case STATUS_TIMEOUT:
+      // Pop up the Idle screen
+      idleScreen();
+
+      // Switch to IDLE mode
+      menuMode = POSTSTATUS_TIMEOUT;
+      break;
+
+    // In POSTSTATUS_TIMEOUT mode, we wait for a PWM cycle to complete
+    // The idle screen has been refreshed and we need to wait.
+    case POSTSTATUS_TIMEOUT:
+      // Switch to IDLE mode
+      menuMode = IDLE;
+      break;
+
+    // In MENU mode
+    case MENU:
+      // HJI LVA = 0;  // Make sure buzzer id off
+      // Disarm the FC
+      generalError |= (1 << DISARMED);
+      // HJI LED1 = 0;
+      // Start the menu system
+      menuMain();
+      // Switch back to status screen when leaving menu
+      menuMode = PRESTATUS;
+      // Reset timeout once back in status screen
+      statusSeconds = 0;
+      // Reset IMU on return from menu
+      resetIMU();
+      break;
+
+    default:
+      break;
+  }
+
+  //************************************************************
+  //* Alarms
+  //************************************************************
+
+  // If RC signal is overdue, signal RX error message
+  if (overdue)
+  {
+    generalError |= (1 << NO_SIGNAL);   // Set NO_SIGNAL bit
+    generalError |= (1 << DISARMED);    // Set DISARMED bit
+    LED_OFF;
+  }
+  else
+    // RC signal received normally
+    generalError &= ~(1 << NO_SIGNAL);  // Clear NO_SIGNAL bit
+
+  // Turn on buzzer if in alarm state (BUZZER_ON is oscillating)
+  if (((generalError & (1 << LVA_ALARM)) ||       // Low battery
+       (generalError & (1 << NO_SIGNAL)) ||       // No signal
+       (generalError & (1 << THROTTLE_HIGH))) &&  // Throttle high
+       (alarmFlags & (1 << BUZZER_ON)))
+  {
+    // Check buzzer mode first
+    // HJI if (config.buzzer == ON)
+      // HJI LVA = 1;
+    // HJI else 
+      // HJI LVA = 0;
+  }
+
+  //************************************************************
+  //* Arm/disarm handling
+  //************************************************************
+
+  // Arm when Armed mode is selected
+  if (config.armMode == ARMED) 
+  {
+    // If disarmed, arm
+    if (generalError & (1 << DISARMED))
+      generalError &= ~(1 << DISARMED);  // Set flags to armed
+      
+    LED_ON;
+  }
+  else if (config.armMode == ARMABLE)
+  {
+    // Manual arm/disarm
+    // If sticks not at extremes, reset manual arm/disarm timer
+    // Sticks down and inside = armed. Down and outside = disarmed
+    if (((-ARM_TIMER_RESET_1 < rcInputs[AILERON])  && (rcInputs[AILERON]  < ARM_TIMER_RESET_1)) ||
+        ((-ARM_TIMER_RESET_1 < rcInputs[ELEVATOR]) && (rcInputs[ELEVATOR] < ARM_TIMER_RESET_1)) ||
+        ((-ARM_TIMER_RESET_1 < rcInputs[RUDDER])   && (rcInputs[RUDDER]   < ARM_TIMER_RESET_1)) ||
+         (ARM_TIMER_RESET_2  < monopolarThrottle))
+    {
+      armTimer = 0;
+    }
+  
+    // If disarmed, arm if sticks held
+    if (generalError & (1 << DISARMED))
+    {
+      // Reset auto-disarm count
+      disarmTimer = 0;
+      disarmSeconds = 0;
+                
+      // If arm timer times out, the sticks must have been at extremes for ARM_TIMER seconds
+      // If aileron is at min, arm the FC
+      if ((armTimer > ARM_TIMER) && (rcInputs[AILERON] < -ARM_TIMER_RESET_1))
+      {
+        armTimer = 0;
+        generalError &= ~(1 << DISARMED);   // Set flags to armed (negate disarmed)
+        calibrateGyrosSlow();               // Calibrate gyros (also saves to eeprom)
+        LED_ON;                             // Signal that FC is ready
+
+        flightFlags |= (1 << ARM_BLOCKER);  // Block motors for a little while to remove arm glitch
+        
+        // Force Menu to IDLE immediately unless in vibration test mode
+        if (config.vibration == OFF)
+        {
+          menuMode = PRESTATUS_TIMEOUT;     // Previously IDLE, which was wrong. 
+        }
+      }
+    } 
+    // If armed, disarm if sticks held
+    else 
+    {
+      // Disarm the FC after DISARM_TIMER seconds if aileron at max
+      if ((armTimer > DISARM_TIMER) && (rcInputs[AILERON] > ARM_TIMER_RESET_1))
+      {
+        armTimer = 0;
+        generalError |= (1 << DISARMED);     // Set flags to disarmed
+        LED_OFF;                             // Signal that FC is now disarmed
+          
+        flightFlags |= (1 << ARM_BLOCKER);  // Block motors for a little while to remove arm glitch
+          
+        // Force Menu to IDLE immediately unless in vibration test mode
+        if (config.vibration == OFF)
+        {
+          menuMode = PRESTATUS_TIMEOUT;  
+        }
+      }
+    }
+  } // else if (Config.ArmMode == ARMABLE)
+  // Handle cases where RC arming has been selected
+  else
+  {
+    // Check for rising edge of RC input delegated to be the arming input
+    if ((rcInputs[config.armChannel] > 500) && (oldArmChannel <= 500))
+    {
+      disarmTimer = 0;
+      disarmSeconds = 0;
+
+      // If disarmed and throttle below minimum, arm
+      if ((generalError & (1 << DISARMED)) && (monopolarThrottle < THROTTLEIDLE))
+      {
+        generalError &= ~(1 << DISARMED);     // Set flags to armed
+        LED_ON;                               // Signal the FC is now armed
+      }
+      // If armed, disarm
+      else if (~(generalError & (1 << DISARMED)))
+      {
+        generalError |= (1 << DISARMED);      // Set flags to disarmed
+        LED_OFF;                              // Signal that FC is now disarmed
+      }
+    }
+    oldArmChannel = rcInputs[config.armChannel];
+  }
+
+  if ((config.armMode != ARMED) && ((generalError & (1 << DISARMED)) == 0)) 
+  {
+    // Automatic disarm
+    // Reset auto-disarm count if any RX activity or set to zero
+    if ((flightFlags & (1 << RXACTIVITY)) || (config.disarmTimer == 0)) {
+      disarmTimer = 0;
+      disarmSeconds = 0;
+    }
+    
+    // Increment disarm timer (seconds) if armed
+    if (disarmTimer > SECOND_TIMER) {
+      disarmSeconds++;
+      disarmTimer = 0;
+    }
+
+    // Auto-disarm model if timeout enabled and due
+    // Don't allow disarms less than 30 seconds. That's just silly...
+    if ((disarmSeconds >= config.disarmTimer) && (config.disarmTimer >= 30)) {
+      // Disarm the FC
+      generalError |= (1 << DISARMED);  // Set flags to disarmed
+      LED_OFF;                          // Signal that FC is now disarmed
+      disarmTimer = 0;
+      disarmSeconds = 0;
+    } 
+  }
+
+  //************************************************************
+  //* Get RC data
+  //************************************************************
+
+  // Update zeroed RC channel data
+  rxGetChannels();
+
+  //************************************************************
+  //* Flight profile / transition state selection
+  //*
+  //* When transitioning, the flight profile is a moving blend of
+  //* Flight profiles P1 to P2. The transition speed is controlled
+  //* by the Config.TransitionSpeed setting.
+  //* The transition will hold at P1n position if directed to.
+  //************************************************************
+
+  // P2 transition point hard-coded to 50% above center
+  if (rcInputs[config.flightChan] > 500)
+  {
+    config.flightSel = 2;  // Flight mode 2 (P2)
+  }
+  // P1.n transition point hard-coded to 50% below center
+  else if (rcInputs[config.flightChan] > -500)
+  {
+    config.flightSel = 1;  // Flight mode 1 (P1.n)
+  }
+  // Otherwise the default is P1
+  else
+  {
+    config.flightSel = 0;  // Flight mode 0 (P1)
+  }
+
+  // Reset update request each loop
+  transitionUpdated = false;
+
+  //************************************************************
+  //* Transition state setup/reset
+  //*
+  //* Set up the correct state for the current setting.
+  //* Check for initial startup - the only time that old_flight should be "3".
+  //* Also, re-initialise if the transition setting is changed
+  //************************************************************
+  
+  if ((oldFlight == 3) || (oldTransMode != config.transitionSpeedOut))
+  {
+    switch (config.flightSel)
+    {
+      case 0:
+        transitionState = TRANS_P1;
+        transitionCounter = config.transitionP1;
+        break;
+      case 1:
+        transitionState = TRANS_P1N;
+        transitionCounter = config.transitionP1n;  // Set transition point to the user-selected point
+        break;
+      case 2:
+        transitionState = TRANS_P2;
+        transitionCounter = config.transitionP2;
+        break;
+      default:
+        break;
+    }
+    oldFlight = config.flightSel;
+    oldTransMode = config.transitionSpeedOut;
+  }
+
+  //************************************************************
+  //* Transition state handling
+  //************************************************************
+
+  // Update timed transition when changing flight modes
+  if (config.flightSel != oldFlight)
+  {
+    // Flag that update is required if mode changed
+    transitionUpdated = true;
+  }
+
+  // Work out transition number when manually transitioning
+  // Convert number to percentage (0 to 100%)
+  if (config.transitionSpeedOut == 0)
+  {
+    // Update the transition variable based on the selected RC channel
+    updateTransition();
+  }
+  else
+  {
+    // transition_counter counts from 0 to 100 (101 steps)
+    transition = transitionCounter;
+  }
+
+  // Always in the TRANSITIONING state when config.transitionSpeed is 0
+  // This prevents state changes when controlled by a channel
+  if (config.transitionSpeedOut == 0)
+  {
+    transitionState = TRANSITIONING;
+  }
+
+  // Update transition state change when control value or flight mode changes
+  if (transitionUpdated)
+  {
+    // Update transition state from matrix
+    transitionState = (uint8_t)pgm_read_byte(&transMatrix[config.flightSel][oldFlight]);
+  }
+
+  // Calculate transition time from user's setting based on the direction of travel
+  if (transitionDirection == P2)
+  {
+    transitionTime = 10 * config.transitionSpeedOut;  // Outbound transition speed
+  }
+  else
+  {
+    transitionTime = 10 * config.transitionSpeedIn;  // Inbound transition speed
+  }
+
+  // Update state, values and transition_counter every config.transitionSpeed if not zero.
+  if (((config.transitionSpeedOut != 0) && (transitionTimeout > transitionTime)) ||
+      // Update immediately
+      transitionUpdated)
+  {
+    transitionTimeout = 0;
+    transitionUpdated = false;
+
+    // Fixed, end-point states
+    if (transitionState == TRANS_P1)
+    {
+      transitionCounter = config.transitionP1;
+    }
+    else if (transitionState == TRANS_P1N)
+    {
+      transitionCounter = config.transitionP1n;
+    }
+    else if (transitionState == TRANS_P2)
+    {
+      transitionCounter = config.transitionP2;
+    }
+
+    // Handle timed transition towards P1
+    if ((transitionState == TRANS_P1N_TO_P1_START) || (transitionState == TRANS_P2_TO_P1_START))
+    {
+      if (transitionCounter > config.transitionP1)
+      {
+        transitionCounter--;
+
+        // Check end point
+        if (transitionCounter <= config.transitionP1)
+        {
+          transitionCounter = config.transitionP1;
+          transitionState = TRANS_P1;
+        }
+      }
+      else
+      {
+        transitionCounter++;
+
+        // Check end point
+        if (transitionCounter >= config.transitionP1)
+        {
+          transitionCounter = config.transitionP1;
+          transitionState = TRANS_P1;
+        }
+      }
+
+      transitionDirection = P1;
+    }
+
+    // Handle timed transition between P1 and P1.n
+    if (transitionState == TRANS_P1_TO_P1N_START)
+    {
+      if (transitionCounter > config.transitionP1n)
+      {
+        transitionCounter--;
+
+        // Check end point
+        if (transitionCounter <= config.transitionP1n)
+        {
+          transitionCounter = config.transitionP1n;
+          transitionState = TRANS_P1N;
+        }
+      }
+      else
+      {
+        transitionCounter++;
+
+        // Check end point
+        if (transitionCounter >= config.transitionP1n)
+        {
+          transitionCounter = config.transitionP1n;
+          transitionState = TRANS_P1N;
+        }
+      }
+
+      transitionDirection = P2;
+    }
+
+    // Handle timed transition between P2 and P1.n
+    if (transitionState == TRANS_P2_TO_P1N_START)
+    {
+      if (transitionCounter > config.transitionP1n)
+      {
+        transitionCounter--;
+
+        // Check end point
+        if (transitionCounter <= config.transitionP1n)
+        {
+          transitionCounter = config.transitionP1n;
+          transitionState = TRANS_P1N;
+        }
+      }
+      else
+      {
+        transitionCounter++;
+
+        // Check end point
+        if (transitionCounter >= config.transitionP1n)
+        {
+          transitionCounter = config.transitionP1n;
+          transitionState = TRANS_P1N;
+        }
+      }
+
+      transitionDirection = P1;
+    }
+
+    // Handle timed transition towards P2
+    if ((transitionState == TRANS_P1N_TO_P2_START) || (transitionState == TRANS_P1_TO_P2_START))
+    {
+      if (transitionCounter > config.transitionP2)
+      {
+        transitionCounter--;
+
+        // Check end point
+        if (transitionCounter <= config.transitionP2)
+        {
+          transitionCounter = config.transitionP2;
+          transitionState = TRANS_P2;
+        }
+      }
+      else
+      {
+        transitionCounter++;
+
+        // Check end point
+        if (transitionCounter >= config.transitionP2)
+        {
+          transitionCounter = config.transitionP2;
+          transitionState = TRANS_P2;
+        }
+      }
+
+      transitionDirection = P2;
+    }
+
+  } // Update transition_counter
+
+  // Zero the I-terms of the opposite state so as to ensure a bump-less transition
+  if ((transitionState == TRANS_P1) || (transition == config.transitionP1))
+  {
+    // Clear P2 I-term while fully in P1
+    memset(&integralGyro[P2][ROLL], 0, sizeof(float) * NUMBEROFAXIS);
+    integralAccelVertF[P2] = 0.0;
+  }
+  else if ((transitionState == TRANS_P2) || (transition == config.transitionP2))
+  {
+    // Clear P1 I-term while fully in P2
+    memset(&integralGyro[P1][ROLL], 0, sizeof(float) * NUMBEROFAXIS);
+    integralAccelVertF[P1] = 0.0;
+  }
+
+  //**********************************************************************
+  //* Reset the IMU when using two orientations and just leaving P1 or P2
+  //**********************************************************************
+
+  if (config.p1Reference != NO_ORIENT)
+  {
+    // If Config.FlightSel has changed (switch based) and TransitionSpeed not set to zero, the transition state will change.
+    if ((config.transitionSpeedOut != 0) && (transitionState != oldTransitionState) && ((oldTransitionState == TRANS_P1) || (oldTransitionState == TRANS_P2)))
+    {
+      resetIMU();
+    }
+
+    // If TransitionSpeed = 0, the state is always TRANSITIONING so we can't use the old/new state changes.
+    // If user is using a knob or TX-slowed switch, TransitionSpeed will be 0.
+    else if (
+      (config.transitionSpeedOut == 0) &&                                               // Manual transition mode and...
+      (((oldTransition == config.transitionP1) && (transition > config.transitionP1)) ||  // Was in P1 or P2
+       ((oldTransition == config.transitionP2) && (transition < config.transitionP2))))    // Is not somewhere in-between.
+    {
+      resetIMU();
+    }
+  }
+
+  // Save current flight mode
+  oldFlight = config.flightSel;
+
+  // Save old transtion state;
+  oldTransitionState = transitionState;
+
+  // Save last transition value
+  oldTransition = transition;  
+  
+  //************************************************************
+  //* Measure incoming RC rate and flag no signal
+  //************************************************************
+
+  // Check to see if the RC input is overdue (50ms)
+  if (rcTimeout > RC_OVERDUE)
+    overdue = true;  // This results in a "No Signal" error
+
+  //***********************************************************
+  //* Read sensors
+  //************************************************************
+
+  mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
+  readGyros();
+  readAccels();
+
+  //************************************************************
+  //* Update attitude, average acc values each loop, and
+  //* Update I-terms, average gyro values each loop
+  //************************************************************
+  if (run500Hz) {
+    run500Hz = false;
+  
+    imuUpdate(0.002);
+    sensorPID(0.002);
+    calculatePID();  // Calculate PID values
+    processMixer();  // Do all the mixer tasks - can be very slow
+    updateServos();  // Transfer Config.Channel[i].value data to 
+                     // ServoOut[i] and check servo limits. 
+                     // Note that values are now at system levels
+                     // (were centered around zero, now centered around 3750)
+    servoCmds();
+
     send500HzServos();
+
+    loopCount = 0;
   }
-  
-  if (frame_250Hz) {
-    frame_250Hz = false;
+
+  if (run250Hz) {
+    run250Hz = false;
     send250HzServos();
   }
   
-  if (frame_100Hz) {
-    frame_100Hz = false;
-  }
-  
-  if (frame_50Hz) {
-    frame_50Hz = false;
-    tasks50Hz();
+  if (run50Hz) {
+    run50Hz = false;
     send50HzServos();
   }
-  
-  if (frame_20Hz) {
-    frame_20Hz = false;
+
+  // Check for throttle reset
+  if (monopolarThrottle < THROTTLEIDLE)  // THROTTLEIDLE = 50
+  {
+    // Clear throttle high error
+    generalError &= ~(1 << THROTTLE_HIGH);
+
+    // Reset I-terms at throttle cut. Using memset saves code space
+    memset(&integralGyro[P1][ROLL], 0, sizeof(int32_t) * 6);
+    integralAccelVertF[P1] = 0.0;
+    integralAccelVertF[P2] = 0.0;
   }
-  
-  if (frame_10Hz) {
-    frame_10Hz = false;
-  }
-  
-  if (frame_5Hz) {
-    frame_5Hz = false;
-  }
-  
-  if (frame_1Hz) {
-    frame_1Hz = false;
-    // Blink Heartbeat LED
-    if (ledState == LOW)
-      ledState = HIGH;
-    else
-      ledState = LOW;
-  
-    digitalWrite(HEARTBEAT_LED, ledState);
-    
-    //uint16_t rawBatt = analogRead(17);
-  } 
+
+  //************************************************************
+  //* Carefully update idle screen if error level changed
+  //************************************************************
+
+  // Only update idle when error state has changed.
+  // This prevents the continual updating of the LCD disrupting the FC
+  if ((oldAlarms != generalError) && (menuMode == IDLE))
+    // Force safe update of idle screen
+    menuMode = PRESTATUS_TIMEOUT;
+
+  // Save current alarm state into old_alarms
+  oldAlarms = generalError;
 }

@@ -35,14 +35,16 @@
 
 #define NOISE_THRESH 50  // Max RX noise threshold
 
-// ************************************************************
-// * Variables
-// ************************************************************
-
 //************************************************************
 // Code
 //************************************************************
 
+volatile int16_t rcInputs[MAX_RC_CHANNELS + 1];     // Normalised RC inputs
+volatile int16_t monopolarThrottle;                 // Monopolar throttle
+volatile int16_t rawChannels[MAX_RC_CHANNELS + 1];  // Raw RC inputs
+
+// Get raw flight channel data (~2500 to 5000) and remove zero offset
+// Use channel mapping for reconfigurability
 void rxGetChannels(void)
 {
   static int16_t oldRxSum;

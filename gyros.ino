@@ -118,8 +118,10 @@ const int8_t gyroPol[NUMBEROFORIENTS][NUMBEROFAXIS] PROGMEM =
 // Code
 //************************************************************
 
+int16_t gx, gy, gz;
 int16_t gyroAdcRaw[NUMBEROFAXIS]; 
 int16_t gyroAdc[NUMBEROFAXIS];     // Holds Gyro data - always in RPY order (Combined - for rest of system)
+int16_t gyroAdcAlt[NUMBEROFAXIS];  // Holds Gyro data - always in RPY order (Combined - for IMU)
 int16_t gyroAdcP1[NUMBEROFAXIS];   // Holds temp Gyro data - always in RPY order (P1)
 int16_t gyroAdcP2[NUMBEROFAXIS];   // Holds temp Gyro data - always in RPY order (P2)
 
