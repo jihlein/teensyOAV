@@ -95,6 +95,22 @@ void rxGetChannels(void)
       overdue = false;
     }
   }
+  else if (config.rxMode == SUMD)
+  {
+    while(Serial3.available())
+      sumdDecoder->add(Serial3.read());
+  
+    if (!sumdDecoder->failSafe()) {
+      for(uint8_t i = 0; i < MAX_RC_CHANNELS; i++) {
+        rawChannels[i] = (sumdDecoder->channel[config.channelOrder[i]] - 1500) * 3.125f;
+
+        rcInputs[i] = rawChannels[i] - config.rxChannelZeroOffset[i];
+      }
+
+      rcTimeout = 0;
+      overdue = false;
+    }
+  }
 
 #if 0
   for (uint8_t i = 0; i < MAX_RC_CHANNELS; i++)

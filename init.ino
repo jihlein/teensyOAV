@@ -34,6 +34,7 @@
 //***********************************************************
 
 #include "servos.h"
+#include "sumdRX.h"
 
 // ************************************************************
 // * Code
@@ -85,6 +86,13 @@ void init(void)
   else if (config.rxMode == SPEKTRUM)
   {
     Serial3.begin(115000);
+  }
+  else if (config.rxMode == SUMD)
+  {
+    Serial3.begin(115200);
+	delay(100);
+	
+	sumdDecoder = new SumdRx();
   }
 
   //***********************************************************

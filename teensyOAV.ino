@@ -44,6 +44,7 @@
 #include "ioCfg.h"
 #include "pid.h"
 #include "rc.h"
+#include "sumdRX.h"
 
 // At the moment, there are some questions/issues revolving around the Arduino sBus
 // library versions.  Version 2.1.2, the lastest, runs fine with FrSky sBus, but does
@@ -67,6 +68,9 @@
 #endif
 
 DSM1024 dsm;
+
+SumdRx *sumdDecoder;
+bool   sumdFailSafe = true;
 
 // Uncomment only one of the following OLED dislay drivers:
 // SPI Drivers:
@@ -344,7 +348,7 @@ void loop()
       // HJI LVA = 0;  // Make sure buzzer id off
       // Disarm the FC
       generalError |= (1 << DISARMED);
-      // HJI LED1 = 0;
+      LED_OFF;
       // Start the menu system
       menuMain();
       // Switch back to status screen when leaving menu
@@ -445,8 +449,8 @@ void loop()
       if ((armTimer > DISARM_TIMER) && (rcInputs[AILERON] > ARM_TIMER_RESET_1))
       {
         armTimer = 0;
-        generalError |= (1 << DISARMED);     // Set flags to disarmed
-        LED_OFF;                             // Signal that FC is now disarmed
+        generalError |= (1 << DISARMED);    // Set flags to disarmed
+        LED_OFF;                            // Signal that FC is now disarmed
           
         flightFlags |= (1 << ARM_BLOCKER);  // Block motors for a little while to remove arm glitch
           
