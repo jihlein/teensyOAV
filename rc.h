@@ -35,7 +35,7 @@
 #include "typedefs.h"
 
 // RC input values
-extern volatile int16_t rcInputs[MAX_RC_CHANNELS + 1];  // Normalised RC inputs
-extern volatile int16_t monopolarThrottle;              // Monopolar throttle
+extern int16_t monopolarThrottle;          // Monopolar throttle
+extern int16_t rcInputs[MAX_RC_CHANNELS];  // Normalised RC inputs
 
 #endif

@@ -62,6 +62,7 @@
 #if defined FRSKYSBUS
   #include <sbus.h>
   bfs::SbusRx sbusRx(&Serial3);
+  bfs::SbusData data;
 #else
   #include <sbus2p0p0.h>
   SbusRx sbusRx(&Serial3);
@@ -98,7 +99,7 @@ myPWMServo output9;
 #define ARM_TIMER_RESET_1  960   // RC position to reset timer for aileron, elevator and rudder
 #define ARM_TIMER_RESET_2  50    // RC position to reset timer for throttle
 #define DISARM_TIMER       3000  // Amount of time the sticks must be held to trigger disarm. Currently three seconds.
-#define RC_OVERDUE         50    // Number of 1 mSec ticks before RC will be overdue = 50 mSec
+#define RC_OVERDUE         5000  // Number of 1 mSec ticks before RC will be overdue = 5 Sec
 #define SECOND_TIMER       1000  // Unit of timing for seconds
 
 //***********************************************************

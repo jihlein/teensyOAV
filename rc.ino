@@ -39,9 +39,9 @@
 // Code
 //************************************************************
 
-volatile int16_t rcInputs[MAX_RC_CHANNELS + 1];     // Normalised RC inputs
-volatile int16_t monopolarThrottle;                 // Monopolar throttle
-volatile int16_t rawChannels[MAX_RC_CHANNELS + 1];  // Raw RC inputs
+int16_t monopolarThrottle;                  // Monopolar throttle
+int16_t rawChannels[MAX_RC_CHANNELS];       // Raw RC inputs
+int16_t rcInputs[MAX_RC_CHANNELS];          // Normalised RC input
 
 // Get raw flight channel data (~2500 to 5000) and remove zero offset
 // Use channel mapping for reconfigurability
@@ -55,21 +55,31 @@ void rxGetChannels(void)
   {
     if (sbusRx.Read())
     {
-      for (uint8_t i = 0; i < MAX_RC_CHANNELS; i++) 
-      {
 #if defined FRSKYSBUS
-        rawChannels[i] = (sbusRx.ch()[config.channelOrder[i]] - 1024) * 1.22f;
-#else
-        rawChannels[i] = (sbusRx.rx_channels()[config.channelOrder[i]] - 1024) * 1.22f;
-#endif
-        rcInputs[i] = rawChannels[i] - config.rxChannelZeroOffset[i];
-      }      
+      data = sbusRx.data();
 
-      if (!sbusRx.failsafe() && !sbusRx.lost_frame())
-      {
+      if (!data.failsafe && !data.lost_frame) {
+        for (uint8_t i = 0; i < MAX_RC_CHANNELS; i++) {
+          rawChannels[i] = (data.ch[config.channelOrder[i]] - 1024) * 1.22f;
+      
+          rcInputs[i] = rawChannels[i] - config.rxChannelZeroOffset[i];
+        }
+
         rcTimeout = 0;
         overdue = false;
       }
+#else
+      if (!sbusRx.failsafe() && !sbusRx.lost_frame()) {
+        for (uint8_t i = 0; i < MAX_RC_CHANNELS; i++) {
+          rawChannels[i] = (sbusRx.rx_channels()[config.channelOrder[i]] - 1024) * 1.22f;
+      
+          rcInputs[i] = rawChannels[i] - config.rxChannelZeroOffset[i];
+        }
+
+        rcTimeout = 0;
+        overdue = false;
+      }
+#endif
     }
   }
   else if (config.rxMode == SPEKTRUM)
@@ -156,9 +166,6 @@ void rxGetChannels(void)
     flightFlags &= ~(1 << RXACTIVITY);
   }
   
-  // Preset RCinputs[NOCHAN] for sanity
-  rcInputs[NOCHAN] = 0;
-
   oldRxSum = rxSum;
 }
 
