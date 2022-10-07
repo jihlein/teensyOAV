@@ -29,6 +29,34 @@
 // *
 // **************************************************************************
 
+#ifndef TYPEDEFS_H
+#define TYPEDEFS_H
+
+// **************************************************************************
+//  * Defines
+// **************************************************************************
+
+#define MAX_RC_CHANNELS 8   // Maximum input channels from RX
+#define MAX_OUTPUTS 10      // Maximum output channels
+#define FLIGHT_MODES 2      // Number of flight profiles
+#define NUMBEROFAXIS 3      // Number of axis (Roll, Pitch, Yaw)
+#define NUMBEROFCURVES 6    // Number of curves available
+#define NUMBEROFPOINTS 7    // Number of points on a curve
+#define NUMBEROFORIENTS 24  // Number board orientations
+#define NUMBEROFSOURCES 21  // Number of universal input sources
+
+#define MOTOR_0           1100  // PWM value to produce a 1.1 mSec throttle pulse regardless of pulse width mode
+#define MOTOR_100         1900  // PWM value to produce a 1.9 mSec throttle pulse regardless of pulse width mode
+#define MOTORMIN          1000  // PWM value for throttle cut. 1000 or 1.0 mSec regardless of pulse width mode
+#define SERVO_CENTER      1500  // Servo center position. 1500 uSec
+#define THROTTLEIDLE        50  // Throttle value below which is considered idle
+#define THROTTLEMIN       1000  // Minimum throttle input offset value. 3750-1000 = 2750 or 1.1 mSec
+                                // Not to be confused with MOTORMIN which is a PWM value.
+#define THROTTLEOFFSET    1250  // Mixer offset needed to reduce the output center to MOTORMIN
+
+
+#define LOGLENGTH           20  // Log length for debugging
+
 // **************************************************************************
 // * Type definitions
 // **************************************************************************
@@ -245,3 +273,15 @@ typedef struct
   // [751]
 
 } CONFIG_STRUCT;
+
+// Misc structures
+typedef struct
+{
+  int8_t  lower;         // Lower limit for menu item
+  int8_t  upper;         // Upper limit for menu item
+  uint8_t increment;     // Increment for menu item
+  uint8_t style;         // 0 = numeral, 1 = text
+  int8_t  defaultValue;  // Default value for this item
+} menuRange_t; 
+
+#endif

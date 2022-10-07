@@ -29,6 +29,143 @@
 // *
 // **************************************************************************
 
+//***********************************************************
+//* Includes
+//***********************************************************
+
+#include "menuExt.h"
+
+//************************************************************
+// Defines
+//************************************************************
+
+#define OFFSETSSTART  230  // Start of Menu text items for curves
+#define OFFSETSOFFSET 128  // LCD offsets
+
+//************************************************************
+// RC menu items
+//************************************************************
+
+const uint16_t offsetsMenuText[MAX_OUTPUTS] PROGMEM = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+const uint16_t offsetsMenuOffsets[MAX_OUTPUTS] PROGMEM = 
+{OFFSETSOFFSET, OFFSETSOFFSET, OFFSETSOFFSET, OFFSETSOFFSET, OFFSETSOFFSET,
+ OFFSETSOFFSET, OFFSETSOFFSET, OFFSETSOFFSET, OFFSETSOFFSET, OFFSETSOFFSET};
+ 
+const menuRange_t offsetsMenuRanges[MAX_OUTPUTS][NUMBEROFPOINTS+1] PROGMEM = 
+{
+  {
+    // OUT1 offset curve (8)
+    {-125,125,1,0,0},          // Point 1
+    {-125,125,1,0,0},          // Point 2
+    {-125,125,1,0,0},          // Point 3
+    {-125,125,1,0,0},          // Point 4
+    {-125,125,1,0,0},          // Point 5
+    {-125,125,1,0,0},          // Point 6
+    {-125,125,1,0,0},          // Point 7
+    {SRC1, SRC1, 1, 1, SRC1},  // Associated channel (unused)
+  },
+  {
+    // OUT2 offset curve (8)
+    {-125,125,1,0,0},          // Point 1
+    {-125,125,1,0,0},          // Point 2
+    {-125,125,1,0,0},          // Point 3
+    {-125,125,1,0,0},          // Point 4
+    {-125,125,1,0,0},          // Point 5
+    {-125,125,1,0,0},          // Point 6
+    {-125,125,1,0,0},          // Point 7
+    {SRC1, SRC1, 1, 1, SRC1},  // Associated channel (unused)
+  },
+  {
+    // OUT3 offset curve (8)
+    {-125,125,1,0,0},          // Point 1
+    {-125,125,1,0,0},          // Point 2
+    {-125,125,1,0,0},          // Point 3
+    {-125,125,1,0,0},          // Point 4
+    {-125,125,1,0,0},          // Point 5
+    {-125,125,1,0,0},          // Point 6
+    {-125,125,1,0,0},          // Point 7
+    {SRC1, SRC1, 1, 1, SRC1},  // Associated channel (unused)
+  },
+  {
+    // OUT4 offset curve (8)
+    {-125,125,1,0,0},          // Point 1
+    {-125,125,1,0,0},          // Point 2
+    {-125,125,1,0,0},          // Point 3
+    {-125,125,1,0,0},          // Point 4
+    {-125,125,1,0,0},          // Point 5
+    {-125,125,1,0,0},          // Point 6
+    {-125,125,1,0,0},          // Point 7
+    {SRC1, SRC1, 1, 1, SRC1},  // Associated channel (unused)
+  },  
+  {
+    // OUT5 offset curve (8)
+    {-125,125,1,0,0},          // Point 1
+    {-125,125,1,0,0},          // Point 2
+    {-125,125,1,0,0},          // Point 3
+    {-125,125,1,0,0},          // Point 4
+    {-125,125,1,0,0},          // Point 5
+    {-125,125,1,0,0},          // Point 6
+    {-125,125,1,0,0},          // Point 7
+    {SRC1, SRC1, 1, 1, SRC1},  // Associated channel (unused)
+  },
+  {
+    // OUT6 offset curve (8)
+    {-125,125,1,0,0},          // Point 1
+    {-125,125,1,0,0},          // Point 2
+    {-125,125,1,0,0},          // Point 3
+    {-125,125,1,0,0},          // Point 4
+    {-125,125,1,0,0},          // Point 5
+    {-125,125,1,0,0},          // Point 6
+    {-125,125,1,0,0},          // Point 7
+    {SRC1, SRC1, 1, 1, SRC1},  // Associated channel (unused)
+  },
+  {
+    // OUT7 offset curve (8)
+    {-125,125,1,0,0},          // Point 1
+    {-125,125,1,0,0},          // Point 2
+    {-125,125,1,0,0},          // Point 3
+    {-125,125,1,0,0},          // Point 4
+    {-125,125,1,0,0},          // Point 5
+    {-125,125,1,0,0},          // Point 6
+    {-125,125,1,0,0},          // Point 7
+    {SRC1, SRC1, 1, 1, SRC1},  // Associated channel (unused)
+  },
+  {
+    // OUT8 offset curve (8)
+    {-125,125,1,0,0},          // Point 1
+    {-125,125,1,0,0},          // Point 2
+    {-125,125,1,0,0},          // Point 3
+    {-125,125,1,0,0},          // Point 4
+    {-125,125,1,0,0},          // Point 5
+    {-125,125,1,0,0},          // Point 6
+    {-125,125,1,0,0},          // Point 7
+    {SRC1, SRC1, 1, 1, SRC1},  // Associated channel (unused)
+  },
+  {
+    // OUT9 offset curve (8)
+    {-125,125,1,0,0},          // Point 1
+    {-125,125,1,0,0},          // Point 2
+    {-125,125,1,0,0},          // Point 3
+    {-125,125,1,0,0},          // Point 4
+    {-125,125,1,0,0},          // Point 5
+    {-125,125,1,0,0},          // Point 6
+    {-125,125,1,0,0},          // Point 7
+    {SRC1, SRC1, 1, 1, SRC1},  // Associated channel (unused)
+  },
+  {
+    // OUT10 offset curve (8)
+    {-125,125,1,0,0},          // Point 1
+    {-125,125,1,0,0},          // Point 2
+    {-125,125,1,0,0},          // Point 3
+    {-125,125,1,0,0},          // Point 4
+    {-125,125,1,0,0},          // Point 5
+    {-125,125,1,0,0},          // Point 6
+    {-125,125,1,0,0},          // Point 7
+    {SRC1, SRC1, 1, 1, SRC1},  // Associated channel (unused)
+  }  
+}; 
+
 // ************************************************************
 // * Main menu-specific setup
 // ************************************************************

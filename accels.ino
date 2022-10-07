@@ -29,6 +29,12 @@
 // *
 // **************************************************************************
 
+//***********************************************************
+//* Includes
+//***********************************************************
+
+#include "imu.h"
+
 // ***********************************************************
 // * ROLL, PITCH, YAW mapping for alternate orientation modes
 // ***********************************************************
@@ -107,6 +113,9 @@ const int8_t accelPol[NUMBEROFORIENTS][NUMBEROFAXIS] PROGMEM =
 // Code
 //************************************************************
 
+float   accelVertF = 0.0;          // Holds the level-zeroed Z-acc value. Used for height damping in hover only.
+int16_t ax, ay, az;
+int16_t accelAdc[NUMBEROFAXIS];    // Holds Acc ADC values - always in RPY order (Combined)
 int16_t accelAdcP1[NUMBEROFAXIS];  // Holds Acc ADC values - always in RPY order (P1)
 int16_t accelAdcP2[NUMBEROFAXIS];  // Holds Acc ADC values - always in RPY order (P2)
 

@@ -43,57 +43,46 @@ void displayRCInput(void)
       centerSticks();
     }
 
-    if (frame_100Hz) {
-      frame_100Hz = false;
-      updateTransition();
-    }
-    
-    if (frame_500Hz) {
-      frame_500Hz = false;
-      tasks500Hz();  
-    }
+    rxGetChannels();
   
-    if (frame_10Hz)
-    {
-      frame_10Hz = false;
+    u8g2.clearBuffer();
     
-      u8g2.clearBuffer();
-    
-      lcdDisplayText(480, 0,  0);  // Throttle
-      lcdDisplayText(481, 0, 10);
-      lcdDisplayText(482, 0, 20);
-      lcdDisplayText(483, 0, 30);
+    lcdDisplayText(480, 0,  0);  // Throttle
+    lcdDisplayText(481, 0, 10);
+    lcdDisplayText(482, 0, 20);
+    lcdDisplayText(483, 0, 30);
 
-      lcdDisplayText(484, 70,  0);  // Gear
-      lcdDisplayText(485, 70, 10);
-      lcdDisplayText(486, 70, 20);
-      lcdDisplayText(487, 70, 30);
+    lcdDisplayText(484, 70,  0);  // Gear
+    lcdDisplayText(485, 70, 10);
+    lcdDisplayText(486, 70, 20);
+    lcdDisplayText(487, 70, 30);
 
-      itoa(monopolarThrottle,pBuffer,10);
-      u8g2.setCursor(37,  0); u8g2.print(pBuffer);
-      itoa(rcInputs[AILERON],pBuffer,10);
-      u8g2.setCursor(37, 10); u8g2.print(pBuffer);
-      itoa(rcInputs[ELEVATOR],pBuffer,10);
-      u8g2.setCursor(37, 20); u8g2.print(pBuffer);
-      itoa(rcInputs[RUDDER],pBuffer,10);
-      u8g2.setCursor(37, 30); u8g2.print(pBuffer);
-      itoa(rcInputs[GEAR],pBuffer,10);
-      u8g2.setCursor(100,  0); u8g2.print(pBuffer);
-      itoa(rcInputs[AUX1],pBuffer,10);
-      u8g2.setCursor(100, 10); u8g2.print(pBuffer);
-      itoa(rcInputs[AUX2],pBuffer,10);
-      u8g2.setCursor(100, 20); u8g2.print(pBuffer);
-      itoa(rcInputs[AUX3],pBuffer,10);
-      u8g2.setCursor(100, 30); u8g2.print(pBuffer);
+    itoa(monopolarThrottle,pBuffer,10);
+    u8g2.setCursor(37,  0); u8g2.print(pBuffer);
+    itoa(rcInputs[AILERON],pBuffer,10);
+    u8g2.setCursor(37, 10); u8g2.print(pBuffer);
+    itoa(rcInputs[ELEVATOR],pBuffer,10);
+    u8g2.setCursor(37, 20); u8g2.print(pBuffer);
+    itoa(rcInputs[RUDDER],pBuffer,10);
+    u8g2.setCursor(37, 30); u8g2.print(pBuffer);
+    itoa(rcInputs[GEAR],pBuffer,10);
+    u8g2.setCursor(100,  0); u8g2.print(pBuffer);
+    itoa(rcInputs[AUX1],pBuffer,10);
+    u8g2.setCursor(100, 10); u8g2.print(pBuffer);
+    itoa(rcInputs[AUX2],pBuffer,10);
+    u8g2.setCursor(100, 20); u8g2.print(pBuffer);
+    itoa(rcInputs[AUX3],pBuffer,10);
+    u8g2.setCursor(100, 30); u8g2.print(pBuffer);
 
-      // Print bottom text and markers
-      u8g2.setFont(u8g2_font_open_iconic_all_1x_t);
-      u8g2.drawStr(  0, 55, "\x6E");  // Left
-      u8g2.setFont(u8g2_font_helvR08_tr);  
-      lcdDisplayText(60, 110, 55);    // Cal.
+    // Print bottom text and markers
+    u8g2.setFont(u8g2_font_open_iconic_all_1x_t);
+    u8g2.drawStr(  0, 55, "\x6E");  // Left
+    u8g2.setFont(u8g2_font_helvR08_tr);  
+    lcdDisplayText(60, 110, 55);    // Cal.
 
-      // Update buffer
-      u8g2.sendBuffer();
-    }
+    // Update buffer
+    u8g2.sendBuffer();
+
+    delay(20);  // Run this loop at ~50 Hz
   }
 }

@@ -286,7 +286,7 @@ void loadEEPROMPreset(uint8_t preset)
       {
         config.channel[i].p1ThrottleVolume = 100;
         config.channel[i].p2ThrottleVolume = 100;
-        config.channel[i].motorMarker      = MOTOR;
+        config.channel[i].motorMarker      = MOTORPWM;
         config.channel[i].p1ZDeltaAccel    = ON;
         config.channel[i].p2ZDeltaAccel    = ON;
       }
@@ -421,7 +421,7 @@ void loadEEPROMPreset(uint8_t preset)
       {
         config.channel[i].p1ThrottleVolume = 100;
         config.channel[i].p2ThrottleVolume = 100;
-        config.channel[i].motorMarker      = MOTOR;
+        config.channel[i].motorMarker      = MOTORPWM;
         config.channel[i].p1RollGyro       = ON;
         config.channel[i].p1RollAccel      = ON;
         config.channel[i].p2RollGyro       = ON;
@@ -542,7 +542,7 @@ void loadEEPROMPreset(uint8_t preset)
       {
         config.channel[i].p1ThrottleVolume = 100;
         config.channel[i].p2ThrottleVolume = 100;
-        config.channel[i].motorMarker      = MOTOR;
+        config.channel[i].motorMarker      = MOTORPWM;
       }
 
       // OUT1

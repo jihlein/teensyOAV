@@ -29,35 +29,43 @@
 // *
 // **************************************************************************
 
-// **************************************************************************
-//  * Defines
-// **************************************************************************
+/*********************************************************************
+ * io_cfg.h
+ ********************************************************************/
 
-#define MAX_RC_CHANNELS 8   // Maximum input channels from RX
-#define MAX_OUTPUTS 10      // Maximum output channels
-#define FLIGHT_MODES 2      // Number of flight profiles
-#define NUMBEROFAXIS 3      // Number of axis (Roll, Pitch, Yaw)
-#define NUMBEROFCURVES 6    // Number of curves available
-#define NUMBEROFPOINTS 7    // Number of points on a curve
-#define NUMBEROFORIENTS 24  // Number board orientations
-#define NUMBEROFSOURCES 21  // Number of universal input sources
+#ifndef IOCFG_H
+#define IOCFG_H
 
-#define MOTOR_0           1100  // PWM value to produce a 1.1 mSec throttle pulse regardless of pulse width mode
-#define MOTOR_100         1900  // PWM value to produce a 1.9 mSec throttle pulse regardless of pulse width mode
-#define MOTORMIN          1000  // PWM value for throttle cut. 1000 or 1.0 mSec regardless of pulse width mode
-#define SERVO_CENTER      1500  // Servo center position. 1500 uSec
-#define THROTTLEIDLE        50  // Throttle value below which is considered idle
-#define THROTTLEMIN       1000  // Minimum throttle input offset value. 3750-1000 = 2750 or 1.1 mSec
-                                // Not to be confused with MOTORMIN which is a PWM value.
-#define THROTTLEOFFSET    1250  // Mixer offset needed to reduce the output center to MOTORMIN
+//***********************************************************
+//* Includes
+//***********************************************************
 
-#define ARM_TIMER         1000  // Amount of time the sticks must be held to trigger arm. Currently one second.
-#define ARM_TIMER_RESET_1  960  // RC position to reset timer for aileron, elevator and rudder
-#define ARM_TIMER_RESET_2   50  // RC position to reset timer for throttle
-#define DISARM_TIMER      3000  // Amount of time the sticks must be held to trigger disarm. Currently three seconds.
-#define SECOND_TIMER      1000  // Unit of timing for seconds
-  
-#define LOGLENGTH           20  // Log length for debugging
+#include "typedefs.h"
+
+//***********************************************************
+//* Random externals
+//***********************************************************
+
+extern CONFIG_STRUCT config;
+
+extern uint16_t systemTick;
+
+//***********************************************************
+//* Pin definitions
+//***********************************************************
+
+// Button Pins
+#define BUTTON1 23
+#define BUTTON2 22
+#define BUTTON3 21
+#define BUTTON4 20
+
+// Status LED
+#define HEARTBEAT_LED 3
+#define STATUS_LED 16
+
+#define LED_ON  digitalWrite(STATUS_LED, 1)
+#define LED_OFF digitalWrite(STATUS_LED, 0)
 
 //***********************************************************
 // Enumeration
@@ -66,11 +74,13 @@
 enum availability  {OFF = 0, ON, SCALE, REVERSE, REVERSESCALE};
 enum curve         {LINEAR = 0, SINE, SQRTSINE};
 enum curves        {P1_THR_CURVE = 0, P2_THR_CURVE, P1_COLL_CURVE, P2_COLL_CURVE, GEN_CURVE_C, GEN_CURVE_D};
-enum devices       {ASERVO = 0, DSERVO, MOTOR}; 
+enum devices       {ASERVO = 0, DSERVO, MOTORPWM, ONESHOT}; 
 enum filters       {HZ5 = 0, HZ10, HZ21, HZ44, HZ94, HZ184, HZ260, NOFILTER};
 enum flightFlags   {RXACTIVITY = 0, ARM_BLOCKER};
 enum frames        {BASIC = 0, EDIT, ABORT, LOG, CURVE, OFFSET};
-enum globalStatus  {IDLE = 0, STATUS, WAITING_TIMEOUT_BD, WAITING_TIMEOUT, MENU};
+enum globalStatus  {IDLE = 0, REQ_STATUS, WAITING_STATUS, PRESTATUS, STATUS,
+                    WAITING_TIMEOUT, WAITING_TIMEOUT_BD, PRESTATUS_TIMEOUT,
+                    STATUS_TIMEOUT, POSTSTATUS_TIMEOUT, MENU};
 enum outputs       {OUT1 = 0, OUT2, OUT3, OUT4, OUT5, OUT6, OUT7, OUT8};
 enum orientation   {UP_BACK = 0, UP_LEFT, UP_FRONT, UP_RIGHT,
                     BACK_DOWN, BACK_LEFT, BACK_UP, BACK_RIGHT,
@@ -85,7 +95,7 @@ enum psych         {MONOPOLAR = 0, BIPOLAR};
 enum rcChannels    {THROTTLE = 0, AILERON, ELEVATOR, RUDDER, GEAR, AUX1, AUX2, AUX3, NOCHAN};
 enum reference     {NO_ORIENT = 0, EARTH, MODEL};
 enum rpyArrayIndex {ROLL = 0, PITCH, YAW, ZED};
-enum rxModes       {SBUS = 0, SPEKTRUM};
+enum rxModes       {SBUS = 0, SPEKTRUM, SUMD};
 enum rxSequ        {JRSEQ = 0, FUTABASEQ, CUSTOM};
 enum safety        {ARMABLE = 0, ARMED, SF_GEAR, SF_AUX1, SF_AUX2, SF_AUX3}; 
 //                  THROTTLE, CURVE A, CURVE B, COLLECTIVE, THROTTLE, AILERON, ELEVATOR, RUDDER, GEAR, AUX1,  AUX2,  AUX3,  ROLLGYRO, PITCHGYO, YAWGYRO, ACCSMOOTH, PITCHSMOOTH, ROLLACC, PITCHACC, AccZ,  NONE
@@ -98,3 +108,5 @@ enum transitState  {TRANS_P1 = 0, TRANS_P1_TO_P1N_START, TRANS_P1N_TO_P1_START, 
 
 enum globalError   {THROTTLE_HIGH = 0, NO_SIGNAL, DISARMED, LVA_ALARM, BUZZER_ON};
 enum MainFlags     {INV_CAL_DONE_P1 = 0, NORMAL_CAL_DONE_P1, INV_CAL_DONE_P2, NORMAL_CAL_DONE_P2};
+
+#endif

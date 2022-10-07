@@ -29,8 +29,20 @@
 // *
 // **************************************************************************
 
+//***********************************************************
+//* Includes
+//***********************************************************
+
+#include "menuExt.h"
+
 // Hard-coded Line Positions
 const uint8_t lines[4] PROGMEM = {LINE0, LINE1, LINE2, LINE3};
+
+// Menu globals
+uint8_t button;
+uint8_t buttonMultiplier;
+uint16_t cursor   = LINE0;
+uint16_t menuTemp = 0;
 
 // Defines
 #define CURVESTARTE 421
@@ -391,7 +403,7 @@ void doMenuItem(uint16_t menuItem, int8_t *values, uint8_t mult, menuRange_t ran
 
     // Set servo position if required
     // Ignore if the output is marked as a motor
-    if  ((servoEnable) && (config.channel[servoNumber].motorMarker != MOTOR))
+    if  ((servoEnable) && (config.channel[servoNumber].motorMarker != MOTORPWM && config.channel[servoNumber].motorMarker != ONESHOT))
     {
       servoUpdate = 0;
 
@@ -1049,10 +1061,10 @@ uint8_t pollButtons(bool acceleration)
 
   while (button == NONE)          
   {
-    buttons = (pinb & 0xf0);  
+    buttons = (pinb & 0xF0);  
     delay(5);
 
-    if (buttons != (pinb & 0xf0))
+    if (buttons != (pinb & 0xF0))
     {
       buttons = 0; // Buttons different
     }

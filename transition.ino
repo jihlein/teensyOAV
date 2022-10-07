@@ -29,30 +29,7 @@
 // *
 // **************************************************************************
 
-// Transition matrix
-// Usage: Transition_state = Trans_Matrix[Config.FlightSel][old_flight]
-// Config.FlightSel is where you've been asked to go, and old_flight is where you were.
-// Transition_state is where you end up :)
-const int8_t transMatrix[3][3] PROGMEM =
-{
-  {TRANSITIONING,         TRANS_P1N_TO_P1_START, TRANS_P2_TO_P1_START},
-  {TRANS_P1_TO_P1N_START, TRANSITIONING,         TRANS_P2_TO_P1N_START},
-  {TRANS_P1_TO_P2_START,  TRANS_P1N_TO_P2_START, TRANSITIONING}
-};
-
-// Flags
-bool transitionUpdated = false;
-
-// Locals
-int8_t   oldFlight = 3;     // Old flight profile
-int8_t   oldTransMode = 0;  // Old transition mode
-int16_t  oldTransition = 0;
-uint8_t  oldTransitionState = TRANS_P1;
-uint8_t  transitionDirection = P2;
-uint8_t  transitionState = TRANS_P1;
-uint16_t transitionTime = 0;
-
-void profileTransition(void)
+void fpTransition(void)
 {
   //************************************************************
   //* Flight profile / transition state selection
@@ -89,6 +66,7 @@ void profileTransition(void)
   //* Check for initial startup - the only time that old_flight should be "3".
   //* Also, re-initialise if the transition setting is changed
   //************************************************************
+  
   if ((oldFlight == 3) || (oldTransMode != config.transitionSpeedOut))
   {
     switch (config.flightSel)
@@ -136,7 +114,7 @@ void profileTransition(void)
     transition = transitionCounter;
   }
 
-  // Always in the TRANSITIONING state when Config.TransitionSpeed is 0
+  // Always in the TRANSITIONING state when config.transitionSpeed is 0
   // This prevents state changes when controlled by a channel
   if (config.transitionSpeedOut == 0)
   {
@@ -160,7 +138,7 @@ void profileTransition(void)
     transitionTime = 10 * config.transitionSpeedIn;  // Inbound transition speed
   }
 
-  // Update state, values and transition_counter every Config.TransitionSpeed if not zero.
+  // Update state, values and transition_counter every config.transitionSpeed if not zero.
   if (((config.transitionSpeedOut != 0) && (transitionTimeout > transitionTime)) ||
       // Update immediately
       transitionUpdated)
@@ -305,13 +283,13 @@ void profileTransition(void)
   {
     // Clear P2 I-term while fully in P1
     memset(&integralGyro[P2][ROLL], 0, sizeof(float) * NUMBEROFAXIS);
-	integralAccelVertF[P2] = 0.0;
+    integralAccelVertF[P2] = 0.0;
   }
   else if ((transitionState == TRANS_P2) || (transition == config.transitionP2))
   {
     // Clear P1 I-term while fully in P2
     memset(&integralGyro[P1][ROLL], 0, sizeof(float) * NUMBEROFAXIS);
-	integralAccelVertF[P1] = 0.0;
+    integralAccelVertF[P1] = 0.0;
   }
 
   //**********************************************************************
@@ -331,8 +309,7 @@ void profileTransition(void)
     else if (
       (config.transitionSpeedOut == 0) &&                                               // Manual transition mode and...
       (((oldTransition == config.transitionP1) && (transition > config.transitionP1)) ||  // Was in P1 or P2
-       ((oldTransition == config.transitionP2) && (transition < config.transitionP2)))    // Is not somewhere in-between.
-    )
+       ((oldTransition == config.transitionP2) && (transition < config.transitionP2))))    // Is not somewhere in-between.
     {
       resetIMU();
     }
@@ -346,5 +323,4 @@ void profileTransition(void)
 
   // Save last transition value
   oldTransition = transition;
-
 }

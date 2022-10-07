@@ -64,7 +64,7 @@ const menuRange_t rcMenuRanges[2][RCITEMSOFFSET] PROGMEM =
 {
   {
     // RC setup (12)                // Min, Max, Increment, Style, Default
-    {SBUS, SPEKTRUM, 1 ,1, SBUS},   // Receiver type (SBUS to CPPM)  
+    {SBUS, SUMD, 1 ,1, SBUS},       // Receiver type (SBUS to SUMD)  
     {JRSEQ, CUSTOM, 1, 1, JRSEQ},   // Channel order
     {GEAR ,AUX3, 1, 1, GEAR},       // Profile select channel
     {0, 40, 1, 0, 0},               // Outbound TransitionSpeed 0 to 40
@@ -113,7 +113,7 @@ void menuRcSetup(uint8_t section)
   menuRange_t range;
   uint16_t    textLink;
   uint16_t    offset = 0;
-  uint16_t    items;
+  uint16_t    items  = 10;
   
   // If submenu item has changed, reset submenu positions
   if (menuFlag)

@@ -29,6 +29,12 @@
 // *
 // **************************************************************************
 
+//***********************************************************
+//* Includes
+//***********************************************************
+
+#include "servos.h"
+
 // ************************************************************
 // * Defines
 // ************************************************************
@@ -675,7 +681,7 @@ void processMixer(void)
           if (step1 < 0)
           {
             // Multiply SIN[100 - transition] steps (0 to 100)
-            temp3 = 100 - (int8_t)pgm_read_byte(&sin[100 - (int8_t)transition]);
+            temp3 = 100 - (int8_t)pgm_read_byte(&SIN[100 - (int8_t)transition]);
           }
           // If P2 greater than P1, SINE is the one we want
           else
@@ -739,7 +745,7 @@ void processMixer(void)
     } // No throttle
 
     // No throttles, so clamp to THROTTLEMIN if flagged as a motor
-    else if (config.channel[i].motorMarker == MOTOR)
+    else if (config.channel[i].motorMarker == MOTORPWM  || config.channel[i].motorMarker == ONESHOT)
     {
       config.channel[i].p1Value = -THROTTLEOFFSET;  // 3750-1250 = 2500 = 1.0ms. THROTTLEOFFSET = 1250
     }

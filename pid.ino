@@ -67,8 +67,15 @@
 //************************************************************
 
 // PID globals for each [Profile] and [axis]
-float   gyroSmooth[NUMBEROFAXIS];  // Filtered gyro data
-int32_t pidAvgGyro[NUMBEROFAXIS];  // Averaged gyro data over last x loops
+float   gyroSmooth[NUMBEROFAXIS];                  // Filtered gyro data
+float   integralAccelVertF[FLIGHT_MODES];          // Integrated Acc Z
+
+int16_t pidAccels[FLIGHT_MODES][NUMBEROFAXIS];
+int16_t pidGyros[FLIGHT_MODES][NUMBEROFAXIS];
+int32_t integralGyro[FLIGHT_MODES][NUMBEROFAXIS];  // PID I-terms (gyro) for each axis
+int32_t pidAvgGyro[NUMBEROFAXIS];                  // Averaged gyro data over last x loops
+
+float   gyroAvgNoise;
 
 float fSample = 0;
 float hpfI    = 0;
@@ -95,7 +102,15 @@ void sensorPID(float period)
   // When combining with the gyro signals, the sticks have to be in the opposite polarity as the gyros.
   // As described above, pitch and yaw are already opposed, but roll needs to be reversed.
 
-  int16_t rcInputsAxis[NUMBEROFAXIS] = {-rcInputs[AILERON], rcInputs[ELEVATOR], rcInputs[RUDDER]};
+  // int16_t rcInputsAxis[NUMBEROFAXIS] = {-rcInputs[AILERON], rcInputs[ELEVATOR], rcInputs[RUDDER]};
+  
+  // The below 4 lines clean up a compiler warning from the above commented out line.
+  
+  int16_t rcInputsAxis[NUMBEROFAXIS];
+  
+  rcInputsAxis[ROLL]  = -rcInputs[AILERON];
+  rcInputsAxis[PITCH] =  rcInputs[ELEVATOR];
+  rcInputsAxis[YAW]   =  rcInputs[RUDDER];  
   
   int8_t stickRates[FLIGHT_MODES][NUMBEROFAXIS] =
   {

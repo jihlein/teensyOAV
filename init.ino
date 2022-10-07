@@ -29,13 +29,25 @@
 // *
 // **************************************************************************
 
+//***********************************************************
+//* Includes
+//***********************************************************
+
+#include "servos.h"
+#include "sumdRX.h"
+
 // ************************************************************
 // * Code
 // ************************************************************
 
+CONFIG_STRUCT config;  // eeProm data configuration
+
+uint16_t systemVoltage = 0;  // Initial voltage measured
+
 void init(void)
 {
   uint8_t i;
+  bool    updated;
   
   //***********************************************************
   // Start up
@@ -75,6 +87,13 @@ void init(void)
   {
     Serial3.begin(115000);
   }
+  else if (config.rxMode == SUMD)
+  {
+    Serial3.begin(115200);
+	delay(100);
+	
+	sumdDecoder = new SumdRx();
+  }
 
   //***********************************************************
   // LCD initialization
@@ -112,7 +131,7 @@ void init(void)
     for (i = 0; i < MAX_OUTPUTS; i++)
     {
       // Check for motor marker
-      if (config.channel[i].motorMarker == MOTOR)
+      if (config.channel[i].motorMarker == MOTORPWM || config.channel[i].motorMarker == ONESHOT)
       {
         // Set output to maximum pulse width
         servoCmd[i] = MOTOR_100;
@@ -146,7 +165,7 @@ void init(void)
     for (i = 0; i < MAX_OUTPUTS; i++)
     {
       // Check for motor marker
-      if (config.channel[i].motorMarker == MOTOR)
+      if (config.channel[i].motorMarker == MOTORPWM || config.channel[i].motorMarker == ONESHOT)
       {
         // Set output to minimum pulse width
         servoCmd[i] = MOTOR_0;
@@ -260,8 +279,11 @@ void init(void)
   
   updateLimits();  // Update travel and trigger limits
 
+  // Set NO_SIGNAL bit
+  generalError |= (1 << NO_SIGNAL);
+  
   // Disarm on start-up if Armed setting is ARMABLE
-  if (config.armMode == ARMABLE)
+  if (config.armMode != ARMED)
   {
     generalError |= (1 << DISARMED);  // Set disarmed bit
   }

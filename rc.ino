@@ -33,18 +33,18 @@
 // * Defines
 // ************************************************************
 
-#define NOISE_THRESH 10  // Max RX noise threshold
-
-// ************************************************************
-// * Variables
-// ************************************************************
-
-byte goodPPMSignal = 0;
+#define NOISE_THRESH 50  // Max RX noise threshold
 
 //************************************************************
 // Code
 //************************************************************
 
+int16_t monopolarThrottle;                  // Monopolar throttle
+int16_t rawChannels[MAX_RC_CHANNELS];       // Raw RC inputs
+int16_t rcInputs[MAX_RC_CHANNELS];          // Normalised RC input
+
+// Get raw flight channel data (~2500 to 5000) and remove zero offset
+// Use channel mapping for reconfigurability
 void rxGetChannels(void)
 {
   static int16_t oldRxSum;
@@ -55,18 +55,31 @@ void rxGetChannels(void)
   {
     if (sbusRx.Read())
     {
-      for (uint8_t i = 0; i < MAX_RC_CHANNELS; i++) 
-      {
-        rawChannels[i] = (sbusRx.rx_channels()[config.channelOrder[i]] - 1024) * 1.22f;
-        
-        rcInputs[i] = rawChannels[i] - config.rxChannelZeroOffset[i];
-      }      
-    
-      if (!sbusRx.failsafe() && !sbusRx.lost_frame())
-      {
+#if defined FRSKYSBUS
+      data = sbusRx.data();
+
+      if (!data.failsafe && !data.lost_frame) {
+        for (uint8_t i = 0; i < MAX_RC_CHANNELS; i++) {
+          rawChannels[i] = (data.ch[config.channelOrder[i]] - 1024) * 1.22f;
+      
+          rcInputs[i] = rawChannels[i] - config.rxChannelZeroOffset[i];
+        }
+
         rcTimeout = 0;
         overdue = false;
       }
+#else
+      if (!sbusRx.failsafe() && !sbusRx.lost_frame()) {
+        for (uint8_t i = 0; i < MAX_RC_CHANNELS; i++) {
+          rawChannels[i] = (sbusRx.rx_channels()[config.channelOrder[i]] - 1024) * 1.22f;
+      
+          rcInputs[i] = rawChannels[i] - config.rxChannelZeroOffset[i];
+        }
+
+        rcTimeout = 0;
+        overdue = false;
+      }
+#endif
     }
   }
   else if (config.rxMode == SPEKTRUM)
@@ -88,6 +101,22 @@ void rxGetChannels(void)
         rcInputs[i] = rawChannels[i] - config.rxChannelZeroOffset[i];
       }      
       
+      rcTimeout = 0;
+      overdue = false;
+    }
+  }
+  else if (config.rxMode == SUMD)
+  {
+    while(Serial3.available())
+      sumdDecoder->add(Serial3.read());
+  
+    if (!sumdDecoder->failSafe()) {
+      for(uint8_t i = 0; i < MAX_RC_CHANNELS; i++) {
+        rawChannels[i] = (sumdDecoder->channel[config.channelOrder[i]] - 1500) * 3.125f;
+
+        rcInputs[i] = rawChannels[i] - config.rxChannelZeroOffset[i];
+      }
+
       rcTimeout = 0;
       overdue = false;
     }
@@ -137,9 +166,6 @@ void rxGetChannels(void)
     flightFlags &= ~(1 << RXACTIVITY);
   }
   
-  // Preset RCinputs[NOCHAN] for sanity
-  rcInputs[NOCHAN] = 0;
-
   oldRxSum = rxSum;
 }
 

@@ -129,6 +129,7 @@ const char RCMenuItem300[]   PROGMEM = "AccVert filter:";
 // RX mode text
 const char RXMode0[]         PROGMEM = "S-Bus";
 const char RXMode1[]         PROGMEM = "Spektrum";
+const char RXMode2[]         PROGMEM = "SumD";
 // Channel order
 const char RCMenuItem6[]     PROGMEM = "JR/Spektrum";
 const char RCMenuItem7[]     PROGMEM = "Futaba"; 
@@ -211,6 +212,7 @@ const char MixerItem420[]    PROGMEM = "Alt. damp";
 const char MixerItem40[]     PROGMEM = "A.Servo";
 const char MixerItem41[]     PROGMEM = "D.Servo";
 const char MixerItem49[]     PROGMEM = "Motor";
+const char MixerItem50[]     PROGMEM = "OneShot";
 const char MixerItem60[]     PROGMEM = "Linear";
 const char MixerItem61[]     PROGMEM = "Sine";
 const char MixerItem62[]     PROGMEM = "SqrtSine";
@@ -684,12 +686,12 @@ const char* textMenu[] =
     //
     Dummy0,
     Dummy0,
-    Dummy0,
-    Dummy0,                  // 222 to 225 Spare
+    Dummy0,                  // 222 to 224 Spare
     //
     MixerItem40,
     MixerItem41,
-    MixerItem49,             // 226 to 228 Output types 
+    MixerItem49,
+    MixerItem50,             // 225 to 228 Output types 
     //
     Misc_Msg01,              // 229 AccVert
     //
@@ -724,7 +726,7 @@ const char* textMenu[] =
     MixerItem40,
     MixerItem41,
     MixerItem49,             // 254 to 256 Device types
-    //	
+    //
     Dummy0,
     Dummy0,                  // 257 to 258 Spare
     //
@@ -892,13 +894,13 @@ const char* textMenu[] =
     Dummy0,                  // 392 to 395 Spare
     //
     RXMode0,
-    RXMode1,                 // 396 to 397 RX mode
+    RXMode1,
+    RXMode2,                 // 396 to 398 RX mode
     //
     Dummy0,
     Dummy0,
     Dummy0,
-    Dummy0,
-    Dummy0,                  // 398 to 402 Spare
+    Dummy0,                  // 399 to 402 Spare
     //
     Curve_0,
     Curve_1,

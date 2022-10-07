@@ -29,6 +29,98 @@
 // *
 // **************************************************************************
 
+//***********************************************************
+//* Includes
+//***********************************************************
+
+#include "menuExt.h"
+
+//************************************************************
+// Defines
+//************************************************************
+
+#define CURVESSTARTE 403  // Start of Menu text items for curves
+#define CURVESOFFSET 128  // LCD offsets
+
+//************************************************************
+// RC menu items
+//************************************************************
+
+const uint16_t curvesMenuText[NUMBEROFCURVES] PROGMEM = {0, 0, 0, 0, 0, 0};
+
+const uint16_t curvesMenuOffsets[NUMBEROFCURVES] PROGMEM = 
+{CURVESOFFSET, CURVESOFFSET, CURVESOFFSET, CURVESOFFSET, CURVESOFFSET, CURVESOFFSET};
+
+const menuRange_t curvesMenuRanges[NUMBEROFCURVES][NUMBEROFPOINTS+1] PROGMEM = 
+{
+  {
+    // P1 Throttle Curve (8)
+    {0,100,1,0,0},             // Point 1
+    {0,100,1,0,17},            // Point 2
+    {0,100,1,0,33},            // Point 3
+    {0,100,1,0,50},            // Point 4
+    {0,100,1,0,66},            // Point 5    
+    {0,100,1,0,83},            // Point 6
+    {0,100,1,0,100},           // Point 7
+    {SRC1, SRC1, 1, 1, SRC1},  // Associated channel
+  },
+  {
+    // P2 Throttle Curve (8)
+    {0,100,1,0,0},             // Point 1
+    {0,100,1,0,17},            // Point 2
+    {0,100,1,0,33},            // Point 3
+    {0,100,1,0,50},            // Point 4
+    {0,100,1,0,66},            // Point 5
+    {0,100,1,0,83},            // Point 6
+    {0,100,1,0,100},           // Point 7
+    {SRC1, SRC1, 1, 1, SRC1},  // Associated channel
+  },
+  {
+    // P1 Collective Curve (8)
+    {-100,100,1,0,-100},       // Point 1
+    {-100,100,1,0,-66},        // Point 2
+    {-100,100,1,0,-33},        // Point 3
+    {-100,100,1,0,0},          // Point 4
+    {-100,100,1,0,33},         // Point 5
+    {-100,100,1,0,66},         // Point 6
+    {-100,100,1,0,100},        // Point 7
+    {SRC1, SRC1, 1, 1, SRC1},  // Associated channel   
+  },
+  {
+    // P2 Collective Curve (8)
+    {-100,100,1,0,-100},       // Point 1
+    {-100,100,1,0,-66},        // Point 2
+    {-100,100,1,0,-33},        // Point 3
+    {-100,100,1,0,0},          // Point 4
+    {-100,100,1,0,33},         // Point 5
+    {-100,100,1,0,66},         // Point 6
+    {-100,100,1,0,100},        // Point 7
+    {SRC1, SRC1, 1, 1, SRC1},  // Associated channel
+  },
+  {
+    // Generic Curve C (8)
+    {-100,100,1,0,-100},         // Point 1
+    {-100,100,1,0,-66},          // Point 2
+    {-100,100,1,0,-33},          // Point 3
+    {-100,100,1,0,0},            // Point 4
+    {-100,100,1,0,33},           // Point 5
+    {-100,100,1,0,66},           // Point 6
+    {-100,100,1,0,100},          // Point 7
+    {SRC5, NOMIX, 1, 1, NOMIX},  // Associated channel
+  },
+  {
+    // Generic Curve D (8)
+    {-100,100,1,0,-100},         // Point 1
+    {-100,100,1,0,-66},          // Point 2
+    {-100,100,1,0,-33},          // Point 3
+    {-100,100,1,0,0},            // Point 4
+    {-100,100,1,0,33},           // Point 5
+    {-100,100,1,0,66},           // Point 6
+    {-100,100,1,0,100},          // Point 7
+    {SRC5, NOMIX, 1, 1, NOMIX},  // Associated channel
+  },
+};
+
 // ************************************************************
 // * Main menu-specific setup
 // ************************************************************

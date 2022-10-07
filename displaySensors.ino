@@ -29,6 +29,14 @@
 // *
 // **************************************************************************
 
+//***********************************************************
+//* Includes
+//***********************************************************
+
+#include "gyros.h"
+#include "imu.h"
+#include "ioCfg.h"
+
 // ************************************************************
 // * Code
 // ************************************************************
@@ -40,27 +48,16 @@ void displaySensors(void)
   // While BACK not pressed
   while(digitalRead(BUTTON1) != 0)
   {
-    if (frame_100Hz) {
-      frame_100Hz = false;
-      updateTransition();  // Update the transition variable
-    }
-    
-    if (frame_500Hz) {
-      frame_500Hz = false;// Read accels
-      // Get the i2c data from the MPU6050
       mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
       readGyros();
       readAccels();
+ 
+    if (run25Hz) { 
+      run25Hz = false;
 
-      // Refresh accSmooth values and AccVert
-      imuUpdate(0.002f);
-
-      // Update I-terms, average gyro values each loop
-      sensorPID(0.002f);
+      imuUpdate(0.04f);
     }
-    
-    if (frame_20Hz) {
-      frame_20Hz = false;
+
       u8g2.clearBuffer();
   
       lcdDisplayText(26,  37, 0);  // Gyro
@@ -101,7 +98,6 @@ void displaySensors(void)
 
       // Update buffer
       u8g2.sendBuffer();
-    }
     
     if (firstTime)
     {
@@ -132,5 +128,7 @@ void displaySensors(void)
       delay(250);
       calibrateAcc(REVERSED);
     }
+
+    delay(20);  // Run this loop at ~50 Hz
   }
 }
