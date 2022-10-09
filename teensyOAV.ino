@@ -36,6 +36,7 @@
 #include <DSMRX.h>
 #include <MPU6050.h>
 #include <myPWMServo.h>
+#include <sbus.h>
 #include <U8g2lib.h>
 #include <Wire.h>
 
@@ -46,34 +47,15 @@
 #include "rc.h"
 #include "sumdRX.h"
 
-// At the moment, there are some questions/issues revolving around the Arduino sBus
-// library versions.  Version 2.1.2, the lastest, runs fine with FrSky sBus, but does
-// not work with Futaba sBus.  Futaba sBus, however, does work with an older version,
-// version 2.0.0.  No newer versions work with Futaba.  Issue "might" be related to the
-// inclusion of SBUS2 headers, but that is as of yet unproven.
-//
-// So for now, uncomment the 2p1p2 include line when using FrSky, and comment  the line
-// for the 2p0p0 include.  Do the opposite when using Futaba.  Not a good long term
-// solution, but....
-
-// Uncomment for FrSky sBus, comment for Futaba (Hopefully temporary)
-#define FRSKYSBUS
-
-#if defined FRSKYSBUS
-  #include <sbus.h>
-  bfs::SbusRx sbusRx(&Serial3);
-  bfs::SbusData data;
-#else
-  #include <sbus2p0p0.h>
-  SbusRx sbusRx(&Serial3);
-#endif
+bfs::SbusRx sbusRx(&Serial3);
+bfs::SbusData data;
 
 DSM1024 dsm;
 
 SumdRx *sumdDecoder;
 bool   sumdFailSafe = true;
 
-// Uncomment only one of the following OLED dislay drivers:
+// Uncomment only one of the following OLED display drivers:
 // SPI Drivers:
 // U8G2_SH1106_128X64_NONAME_F_4W_HW_SPI u8g2(U8G2_R0, /* cs=*/ 10, /* dc=*/ 9, /* reset=*/ 8);
 U8G2_SSD1306_128X64_NONAME_F_4W_SW_SPI u8g2(U8G2_R0, /* clock=*/ 13, /* data=*/ 11, /* cs=*/ 10, /* dc=*/ 9, /* reset=*/ 8);

@@ -55,7 +55,6 @@ void rxGetChannels(void)
   {
     if (sbusRx.Read())
     {
-#if defined FRSKYSBUS
       data = sbusRx.data();
 
       if (!data.failsafe && !data.lost_frame) {
@@ -68,18 +67,6 @@ void rxGetChannels(void)
         rcTimeout = 0;
         overdue = false;
       }
-#else
-      if (!sbusRx.failsafe() && !sbusRx.lost_frame()) {
-        for (uint8_t i = 0; i < MAX_RC_CHANNELS; i++) {
-          rawChannels[i] = (sbusRx.rx_channels()[config.channelOrder[i]] - 1024) * 1.22f;
-      
-          rcInputs[i] = rawChannels[i] - config.rxChannelZeroOffset[i];
-        }
-
-        rcTimeout = 0;
-        overdue = false;
-      }
-#endif
     }
   }
   else if (config.rxMode == SPEKTRUM)
