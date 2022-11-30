@@ -48,56 +48,56 @@ void displaySensors(void)
   // While BACK not pressed
   while(digitalRead(BUTTON1) != 0)
   {
-      mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
-      readGyros();
-      readAccels();
+    previousTime = startTime;      
+    startTime = micros();      
+    dt = (float)(startTime - previousTime) / 1000000.0f;
+
+    mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
+    readGyros();
+    readAccels();
  
-    if (run25Hz) { 
-      run25Hz = false;
+    imuUpdate(dt);
 
-      imuUpdate(0.04f);
-    }
-
-      u8g2.clearBuffer();
+    u8g2.clearBuffer();
   
-      lcdDisplayText(26,  37, 0);  // Gyro
-      lcdDisplayText(30,  72, 0);  // Acc
-      lcdDisplayText(31, 107, 0);  // IMU
+    lcdDisplayText(26,  37, 0);  // Gyro
+    lcdDisplayText(30,  72, 0);  // Acc
+    lcdDisplayText(31, 107, 0);  // IMU
 
-      lcdDisplayText(27, 5, 13);   // Roll
-      lcdDisplayText(28, 5, 23);   // Pitch
-      lcdDisplayText(29, 5, 33);   // Yaw/Z
+    lcdDisplayText(27, 5, 13);   // Roll
+    lcdDisplayText(28, 5, 23);   // Pitch
+    lcdDisplayText(29, 5, 33);   // Yaw/Z
 
-      lcdDisplayText(229, 5, 45);  // AccVert
+    lcdDisplayText(229, 5, 45);  // AccVert
     
-      itoa(gyroAdcAlt[ROLL],pBuffer,10);
-      u8g2.setCursor(40, 13); u8g2.print(pBuffer);
-      itoa(gyroAdcAlt[PITCH],pBuffer,10);
-      u8g2.setCursor(40, 23); u8g2.print(pBuffer);
-      itoa(gyroAdcAlt[YAW],pBuffer,10);
-      u8g2.setCursor(40, 33); u8g2.print(pBuffer);
-      itoa(accelAdc[ROLL],pBuffer,10);
-      u8g2.setCursor(75, 13); u8g2.print(pBuffer);
-      itoa(accelAdc[PITCH],pBuffer,10);
-      u8g2.setCursor(75, 23); u8g2.print(pBuffer);
-      itoa(accelAdc[YAW],pBuffer,10);
-      u8g2.setCursor(75, 33); u8g2.print(pBuffer);
-      itoa(angle[ROLL]/100,pBuffer,10);
-      u8g2.setCursor(107, 13); u8g2.print(pBuffer);
-      itoa(angle[PITCH]/100,pBuffer,10);
-      u8g2.setCursor(107, 23); u8g2.print(pBuffer);    
-      itoa((int16_t)accelVertF,pBuffer,10);
-      u8g2.setCursor(40, 45); u8g2.print(pBuffer);
+    itoa(gyroAdcAlt[ROLL],pBuffer,10);
+    u8g2.setCursor(40, 13); u8g2.print(pBuffer);
+    itoa(gyroAdcAlt[PITCH],pBuffer,10);
+    u8g2.setCursor(40, 23); u8g2.print(pBuffer);
+    itoa(gyroAdcAlt[YAW],pBuffer,10);
+    u8g2.setCursor(40, 33); u8g2.print(pBuffer);
+    itoa(accelAdc[ROLL],pBuffer,10);
+    u8g2.setCursor(75, 13); u8g2.print(pBuffer);
+    itoa(accelAdc[PITCH],pBuffer,10);
+    u8g2.setCursor(75, 23); u8g2.print(pBuffer);
+    itoa(accelAdc[YAW],pBuffer,10);
+    u8g2.setCursor(75, 33); u8g2.print(pBuffer);
+    itoa(angle[ROLL]/100,pBuffer,10);
+    u8g2.setCursor(107, 13); u8g2.print(pBuffer);
+    itoa(angle[PITCH]/100,pBuffer,10);
+    u8g2.setCursor(107, 23); u8g2.print(pBuffer);    
+    itoa((int16_t)accelVertF,pBuffer,10);
+    u8g2.setCursor(40, 45); u8g2.print(pBuffer);
     
-      // Print bottom markers
-      u8g2.setFont(u8g2_font_open_iconic_all_1x_t);
-      u8g2.drawStr(  0, 55, "\x6E");  // Left
-      u8g2.setFont(u8g2_font_helvR08_tr);  
-      lcdDisplayText(60, 108, 55);  // Calibrate
-      lcdDisplayText(25,  75, 55);  // Inverted Calibrate   
+    // Print bottom markers
+    u8g2.setFont(u8g2_font_open_iconic_all_1x_t);
+    u8g2.drawStr(  0, 55, "\x6E");  // Left
+    u8g2.setFont(u8g2_font_helvR08_tr);  
+    lcdDisplayText(60, 108, 55);  // Calibrate
+    lcdDisplayText(25,  75, 55);  // Inverted Calibrate   
 
-      // Update buffer
-      u8g2.sendBuffer();
+    // Update buffer
+    u8g2.sendBuffer();
     
     if (firstTime)
     {
@@ -129,6 +129,10 @@ void displaySensors(void)
       calibrateAcc(REVERSED);
     }
 
-    delay(20);  // Run this loop at ~50 Hz
+    // Delay until 1000 uSec (1000 Hz) have elapsed
+    elapsedTime = micros();   Serial.println(elapsedTime - startTime);
+  
+    while (1000 > (elapsedTime - startTime))
+      elapsedTime = micros();
   }
 }

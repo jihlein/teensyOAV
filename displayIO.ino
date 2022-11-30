@@ -52,27 +52,26 @@ void displayInOut(void)
   // While back button not pressed
   while(digitalRead(BUTTON1) != 0)
   {
+    previousTime = startTime;      
+    startTime = micros();      
+    dt = (float)(startTime - previousTime) / 1000000.0f;
+
     rxGetChannels();
 
     mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
     readGyros();
     readAccels();
       
-    if (run25Hz)
-    {
-      run25Hz = false;
-
-      imuUpdate(0.04f);
-      sensorPID(0.04f);
-      calculatePID();      // Calculate PID values
-      updateTransition();  // Update the transition variable
-	  fpTransition();      // Run the transition timer
-      processMixer();      // Do all the mixer tasks - can be very slow
-      updateServos();      // Transfer Config.Channel[i].value data to 
-                           // ServoOut[i] and check servo limits. 
-                           // Note that values are now at system levels
-    }
-
+    imuUpdate(dt);
+    sensorPID(dt);
+    calculatePID();      // Calculate PID values
+    updateTransition();  // Update the transition variable
+    fpTransition();      // Run the transition timer
+    processMixer();      // Do all the mixer tasks - can be very slow
+    updateServos();      // Transfer Config.Channel[i].value data to 
+                         // ServoOut[i] and check servo limits. 
+                         // Note that values are now at system levels
+    
     // Re-span numbers from internal values (2500 to 5000) to microseconds
     for (i = 0; i < MAX_OUTPUTS; i++)
     {
@@ -201,7 +200,7 @@ void displayInOut(void)
     // Display the transition number as 1.00 to 2.00
     uint8_t xLoc = 104;  // X location of transition display
     uint8_t yLoc = 53;   // Y location of transition display
-Serial.println(transition);
+
     uTemp = transition + 100;
     temp = uTemp / 100;  // Display whole decimal part first
     
@@ -228,6 +227,10 @@ Serial.println(transition);
 
     u8g2.sendBuffer();
 
-    delay(20);  // Run this loop at ~50 Hz
+    // Delay until 1000 uSec (1000 Hz) have elapsed
+    elapsedTime = micros();   Serial.println(elapsedTime - startTime);
+  
+    while (1000 > (elapsedTime - startTime))
+      elapsedTime = micros();
   }
 }

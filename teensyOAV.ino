@@ -77,6 +77,8 @@ myPWMServo output9;
 //* Defines
 //***********************************************************
 
+// Counts based on 1000 Hz loop rate (1 mSec deltaT)
+
 #define ARM_TIMER          1000  // Amount of time the sticks must be held to trigger arm. Currently one second.
 #define ARM_TIMER_RESET_1  960   // RC position to reset timer for aileron, elevator and rudder
 #define ARM_TIMER_RESET_2  50    // RC position to reset timer for throttle
@@ -133,6 +135,9 @@ volatile bool    overdue = true;
 volatile uint8_t pinb    = 0xFF;
 
 // Timing Variables
+float dt;
+uint32_t elapsedTime, previousTime, startTime;
+
 uint16_t armTimer          = 0;
 uint16_t disarmTimer       = 0;
 uint16_t gyroTimeout       = 0;
@@ -144,11 +149,6 @@ uint16_t updateStatusTimer = 0;
 
 IntervalTimer execTimer;
 
-bool run500Hz;
-bool run250Hz;
-bool run50Hz;
-bool run25Hz;
-
 uint8_t heartbeatLedState = LOW;
 
 //************************************************************
@@ -156,7 +156,7 @@ uint8_t heartbeatLedState = LOW;
 //************************************************************
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(500000);
   
   // Call Init Functions
   init();
@@ -179,21 +179,6 @@ void execCount(void) {
   transitionTimeout++;
   updateStatusTimer++;
   
-  if (systemTick > 1000)
-    systemTick = 1;
-
-  if ((systemTick % 2) == 0)
-    run500Hz = true;
-
-  if ((systemTick % 4) == 0)
-    run250Hz = true;
-
-  if ((systemTick % 20) == 0)
-    run50Hz = true;
-
-  if ((systemTick % 40) == 0)
-    run25Hz = true;
-
   pinb = digitalRead(BUTTON1) << 7 |
          digitalRead(BUTTON2) << 6 |
          digitalRead(BUTTON3) << 5 |
@@ -206,6 +191,10 @@ void execCount(void) {
 
 void loop() 
 {
+  previousTime = startTime;      
+  startTime = micros();      
+  dt = (float)(startTime - previousTime) / 1000000.0f;
+
   // Increment the loop counter
   loopCount++;
     
@@ -529,33 +518,23 @@ void loop()
   //* Update attitude, average acc values each loop, and
   //* Update I-terms, average gyro values each loop
   //************************************************************
-  if (run500Hz) {
-    run500Hz = false;
-  
-    imuUpdate(0.002);
-    sensorPID(0.002);
-    calculatePID();  // Calculate PID values
-    processMixer();  // Do all the mixer tasks - can be very slow
-    updateServos();  // Transfer Config.Channel[i].value data to 
-                     // ServoOut[i] and check servo limits. 
-                     // Note that values are now at system levels
-                     // (were centered around zero, now centered around 3750)
-    servoCmds();
+  imuUpdate(dt);
+  sensorPID(dt);
+  calculatePID();  // Calculate PID values
+  processMixer();  // Do all the mixer tasks - can be very slow
+  updateServos();  // Transfer Config.Channel[i].value data to 
+                   // ServoOut[i] and check servo limits. 
+                   // Note that values are now at system levels
+                   // (were centered around zero, now centered around 3750)
+  servoCmds();
 
-    send500HzServos();
+  loopCount = 0;
 
-    loopCount = 0;
-  }
+  send500HzServos();
 
-  if (run250Hz) {
-    run250Hz = false;
-    send250HzServos();
-  }
-  
-  if (run50Hz) {
-    run50Hz = false;
-    send50HzServos();
-  }
+  send250HzServos();
+
+  send50HzServos();
 
   // Check for throttle reset
   if (monopolarThrottle < THROTTLEIDLE)  // THROTTLEIDLE = 50
@@ -581,4 +560,12 @@ void loop()
 
   // Save current alarm state into old_alarms
   oldAlarms = generalError;
+  
+  // Delay until 1000 uSec (1000 Hz) have elapsed
+  Serial.print(startTime - previousTime);  Serial.print("\t");
+  elapsedTime = micros();
+  Serial.println(elapsedTime - startTime);
+  
+  while (1000 > (elapsedTime - startTime))
+    elapsedTime = micros();
 }

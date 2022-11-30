@@ -236,15 +236,15 @@ void init(void)
   //*********************************************************** 
 
   Wire.begin();
-  Wire.setClock(800000);
+  Wire.setClock(1000000);
   
   mpu.initialize();
-  mpu.setClockSource(MPU6050_CLOCK_PLL_XGYRO);
-  mpu.setInterruptDrive(MPU6050_INTCFG_INT_OPEN_BIT);
-  mpu.setDLPFMode(6 - config.mpu6050LPF);
-  mpu.setRate(1);  // 500 Hz
-  mpu.setFullScaleGyroRange(MPU6050_GYRO_FS_2000);
-  mpu.setFullScaleAccelRange(MPU6050_ACCEL_FS_4);
+  mpu.setClockSource(MPU6050_CLOCK_PLL_XGYRO);         // Set PPL XGYRO as clock source
+  mpu.setInterruptDrive(MPU6050_INTCFG_INT_OPEN_BIT);  // Set interrupt configuration (interrupt not used)
+  mpu.setDLPFMode(6 - config.mpu6050LPF);              // DLPF setting from config
+  mpu.setRate(0);                                      // 1000 Hz with DLPF enabled
+  mpu.setFullScaleGyroRange(MPU6050_GYRO_FS_2000);     // Gyro 2000 DPS full scale
+  mpu.setFullScaleAccelRange(MPU6050_ACCEL_FS_4);      // Accel 4 G full scale
 
   //***********************************************************
   // Remaining init tasks

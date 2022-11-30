@@ -182,7 +182,7 @@ void sensorPID(float period)
     if (config.gyroLPF != NOFILTER)
     {
       // Gyro LPF
-      gyroSmooth[axis] = ((gyroSmooth[axis] * (tempF1 - 1.0f)) + gyroAdcF) / tempF1;
+      gyroSmooth[axis] = gyroSmooth[axis] + tempF1 * (gyroAdcF - gyroSmooth[axis]);
     }
     else
     {

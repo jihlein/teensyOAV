@@ -66,9 +66,9 @@ float vectorNewA, vectorNewB;
 
 int16_t angle[2];                 // Attitude in degrees - pitch and roll
 
-// Software LPF conversion table      5Hz,  10Hz, 21Hz, 44Hz, 94Hz, 184Hz, 260Hz, None  
-const float lpfLookup[8] PROGMEM = {16.43,  8.27, 4.18, 2.22, 1.30,  1.00,  1.00, 1.00};  // 500 Hz
-// HJI const float lpfLookup[8] PROGMEM = {32.86, 16.54, 8.36, 4.43, 2.60,  1.93,  1.77, 1.00};  // 1000 Hz
+// Software LPF conversion table, see filterWorksheet.xls
+//                                    5Hz,       10Hz,     21Hz,     44Hz,     94Hz,      184Hz,    260Hz,   None  
+const float lpfLookup[8] PROGMEM = {0.030459,  0.059117, 0.116566, 0.216583, 0.371314,  0.536201,  0.620296, 1.00};  // 1000 Hz
 
 //************************************************************
 //
@@ -122,7 +122,7 @@ void imuUpdate(float period)
     // Acc LPF
     if (config.accLPF != NOFILTER)
     {
-      accelSmooth[axis] = ((accelSmooth[axis] * (tempF - 1.0f)) - accelAdcF) / tempF;
+      accelSmooth[axis] = accelSmooth[axis] + tempF * (-accelAdcF - accelSmooth[axis]);
     }
     else
     {
