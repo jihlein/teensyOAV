@@ -129,10 +129,13 @@ void displaySensors(void)
       calibrateAcc(REVERSED);
     }
 
-    // Delay until 1000 uSec (1000 Hz) have elapsed
-    elapsedTime = micros();   Serial.println(elapsedTime - startTime);
+    // Delay until 25000 uSec (40 Hz) have elapsed
+    elapsedTime = micros();
   
-    while (1000 > (elapsedTime - startTime))
+    Serial.print(startTime - previousTime);  Serial.print("\t");
+    Serial.println(elapsedTime - startTime);
+    
+    while (25000 > (elapsedTime - startTime))
       elapsedTime = micros();
   }
 }

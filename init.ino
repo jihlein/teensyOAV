@@ -34,7 +34,7 @@
 //***********************************************************
 
 #include "servos.h"
-#include "sumdRX.h"
+#include "src/SUMDRX/sumdRX.h"
 
 // ************************************************************
 // * Code
@@ -99,6 +99,10 @@ void init(void)
   // LCD initialization
   //***********************************************************
 
+  #ifdef OLED_I2C
+    u8g2.setBusClock(1000000);
+  #endif
+  
   u8g2.begin();
   u8g2.setFontPosTop();
   u8g2.setFont(u8g2_font_helvR08_tr);
@@ -235,16 +239,18 @@ void init(void)
   // i2c init
   //*********************************************************** 
 
-  Wire.begin();
-  Wire.setClock(1000000);
+  #ifdef OLED_SPI
+    Wire.begin();
+    Wire.setClock(1000000);
+  #endif
   
   mpu.initialize();
-  mpu.setClockSource(MPU6050_CLOCK_PLL_XGYRO);         // Set PPL XGYRO as clock source
-  mpu.setInterruptDrive(MPU6050_INTCFG_INT_OPEN_BIT);  // Set interrupt configuration (interrupt not used)
-  mpu.setDLPFMode(6 - config.mpu6050LPF);              // DLPF setting from config
-  mpu.setRate(0);                                      // 1000 Hz with DLPF enabled
-  mpu.setFullScaleGyroRange(MPU6050_GYRO_FS_2000);     // Gyro 2000 DPS full scale
-  mpu.setFullScaleAccelRange(MPU6050_ACCEL_FS_4);      // Accel 4 G full scale
+  mpu.setClockSource(MPU6050_IMU::MPU6050_CLOCK_PLL_XGYRO);         // Set PPL XGYRO as clock source
+  mpu.setInterruptDrive(MPU6050_IMU::MPU6050_INTCFG_INT_OPEN_BIT);  // Set interrupt configuration (interrupt not used)
+  mpu.setDLPFMode(6 - config.mpu6050LPF);                           // DLPF setting from config
+  mpu.setRate(0);                                                   // 1000 Hz with DLPF enabled
+  mpu.setFullScaleGyroRange(MPU6050_IMU::MPU6050_GYRO_FS_2000);     // Gyro 2000 DPS full scale
+  mpu.setFullScaleAccelRange(MPU6050_IMU::MPU6050_ACCEL_FS_4);      // Accel 4 G full scale
 
   //***********************************************************
   // Remaining init tasks

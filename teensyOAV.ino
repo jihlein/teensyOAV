@@ -33,11 +33,6 @@
 //* Includes
 //***********************************************************
 
-#include <DSMRX.h>
-#include <MPU6050.h>
-#include <myPWMServo.h>
-#include <sbus.h>
-#include <U8g2lib.h>
 #include <Wire.h>
 
 #include "accels.h"
@@ -45,7 +40,13 @@
 #include "ioCfg.h"
 #include "pid.h"
 #include "rc.h"
-#include "sumdRX.h"
+
+#include "src/DSMRX/DSMRX.h"
+#include "src/MPU6050/MPU6050.h"
+#include "src/PWMServo/myPWMServo.h"
+#include "src/SBUS/SBUS.h"
+#include "src/SUMDRX/sumdRX.h"
+#include "src/U8G2/U8g2lib.h"
 
 bfs::SbusRx sbusRx(&Serial3);
 bfs::SbusData data;
@@ -55,10 +56,18 @@ DSM1024 dsm;
 SumdRx *sumdDecoder;
 bool   sumdFailSafe = true;
 
-// Uncomment only one of the following OLED display drivers:
-// SPI Drivers:
-// U8G2_SH1106_128X64_NONAME_F_4W_HW_SPI u8g2(U8G2_R0, /* cs=*/ 10, /* dc=*/ 9, /* reset=*/ 8);
-U8G2_SSD1306_128X64_NONAME_F_4W_SW_SPI u8g2(U8G2_R0, /* clock=*/ 13, /* data=*/ 11, /* cs=*/ 10, /* dc=*/ 9, /* reset=*/ 8);
+// Uncomment only one of the following SSD1306 OLED display drivers:
+#define OLED_SPI
+//#define OLED_I2C
+
+#ifdef OLED_SPI
+  U8G2_SSD1306_128X64_NONAME_F_4W_SW_SPI u8g2(U8G2_R0, /* clock=*/ 13, /* data=*/ 11, /* cs=*/ 10, /* dc=*/ 9, /* reset=*/ 8);
+#endif
+
+#ifdef OLED_I2C
+  //U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
+  U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R0, /* reset=*/ U8X8_PIN_NONE);
+#endif
 
 MPU6050 mpu;
 
@@ -562,8 +571,9 @@ void loop()
   oldAlarms = generalError;
   
   // Delay until 1000 uSec (1000 Hz) have elapsed
-  Serial.print(startTime - previousTime);  Serial.print("\t");
   elapsedTime = micros();
+  
+  Serial.print(startTime - previousTime);  Serial.print("\t");
   Serial.println(elapsedTime - startTime);
   
   while (1000 > (elapsedTime - startTime))
