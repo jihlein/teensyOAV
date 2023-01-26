@@ -57,8 +57,8 @@ SumdRx *sumdDecoder;
 bool   sumdFailSafe = true;
 
 // Uncomment only one of the following SSD1306 OLED display drivers:
-// #define OLED_SPI
-#define OLED_I2C
+#define OLED_SPI
+//#define OLED_I2C
 
 #if defined(OLED_SPI) && defined(OLED_I2C)
   #error "Must select only 1 OLED interface type...."
@@ -70,6 +70,7 @@ bool   sumdFailSafe = true;
 
 #ifdef OLED_SPI
   U8G2_SSD1306_128X64_NONAME_F_4W_SW_SPI u8g2(U8G2_R0, /* clock=*/ 13, /* data=*/ 11, /* cs=*/ 10, /* dc=*/ 9, /* reset=*/ 8);
+  //U8G2_SH1106_128X64_NONAME_F_4W_HW_SPI u8g2(U8G2_R0, /* cs=*/ 10, /* dc=*/ 9, /* reset=*/ 8);  
 #endif
 
 #ifdef OLED_I2C
